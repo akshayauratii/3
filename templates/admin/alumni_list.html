@@ -1,0 +1,56 @@
+{% extends 'admin/admin_base.html' %}
+{% block admin_content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0;">Total Alumni</h2>
+        <span class="badge" style="background: var(--secondary); color: white;">{{ alumni.count }} Records</span>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Graduation Year</th>
+                    <th>Current Status / Profession</th>
+                    <th>Join Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alum in alumni %}
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div
+                                style="width: 35px; height: 35px; background: #e0e0e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #555;">
+                                {{ alum.user.first_name|first|default:alum.user.username|first|upper }}
+                            </div>
+                            <div>
+                                <div style="font-weight: 500;">{{ alum.user.first_name }} {{ alum.user.last_name }}
+                                </div>
+                                <div style="font-size: 0.8rem; color: #888;">@{{ alum.user.username }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ alum.user.email }}</td>
+                    <td><span style="color: #999;">N/A</span></td>
+                    <td>
+                        {% if alum.skills %}
+                        {{ alum.skills|truncatechars:30 }}
+                        {% else %}
+                        <span style="color: #999;">N/A</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ alum.user.date_joined|date:"M d, Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 2rem; color: #999;">No alumni found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

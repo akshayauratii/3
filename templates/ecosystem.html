@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .ecosystem-container {
+        max-width: 1000px;
+        margin: 4rem auto;
+        padding: 0 2rem;
+        text-align: center;
+    }
+
+    .eco-header h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: fadeIn 1s ease-in;
+    }
+
+    .eco-header p {
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 4rem;
+    }
+
+    .options-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 3rem;
+        perspective: 1000px;
+    }
+
+    .option-card {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem 2rem;
+        text-decoration: none;
+        color: inherit;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .option-card:hover {
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        border-color: var(--primary-color);
+    }
+
+    .card-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        display: inline-block;
+        transition: transform 0.4s ease;
+    }
+
+    .option-card:hover .card-icon {
+        transform: scale(1.2) rotate(5deg);
+    }
+
+    .card-title {
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        color: #333;
+    }
+
+    .card-desc {
+        color: #777;
+        line-height: 1.6;
+    }
+
+    /* Decorative circles */
+    .option-card::before {
+        content: '';
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: rgba(var(--primary-rgb), 0.1);
+        transition: all 0.5s ease;
+    }
+
+    .option-card:hover::before {
+        transform: scale(5);
+        opacity: 0.1;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="ecosystem-container">
+    <div class="eco-header">
+        <h1>Your Future Starts Here 🚀</h1>
+        <p>Explore opportunities tailored for your career path.</p>
+    </div>
+
+    <div class="options-grid">
+        <a href="{% url 'jobs_home' %}" class="option-card">
+            <div class="card-icon">💼</div>
+            <div class="card-title">Jobs</div>
+            <div class="card-desc">
+                Find your dream role. Explore opportunities in both Private and Government sectors.
+            </div>
+        </a>
+
+        <a href="{% url 'internships_home' %}" class="option-card">
+            <div class="card-icon">🎓</div>
+            <div class="card-title">Internships</div>
+            <div class="card-desc">
+                Gain real-world experience. Browse Paid and Unpaid internships in Software & Hardware.
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .resource-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 5rem 2rem;
+        text-align: center;
+        border-radius: 0 0 50% 50% / 4rem;
+        margin-bottom: 4rem;
+    }
+
+    .resource-icon {
+        font-size: 5rem;
+        margin-bottom: 1rem;
+        display: block;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .resource-title {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        font-family: 'Outfit', serif;
+    }
+
+    .resource-desc {
+        font-size: 1.25rem;
+        max-width: 700px;
+        margin: 0 auto;
+        opacity: 0.9;
+        line-height: 1.6;
+    }
+
+    .section-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2.5rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        margin-bottom: 3rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        color: var(--primary-color);
+        margin-bottom: 2rem;
+        border-bottom: 3px solid #f0f0f0;
+        padding-bottom: 0.5rem;
+        display: inline-block;
+    }
+
+    /* Skills Chips */
+    .skills-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .skill-chip {
+        background: #e3f2fd;
+        color: var(--secondary-color);
+        padding: 0.8rem 1.5rem;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        border: 1px solid transparent;
+        transition: all 0.3s;
+    }
+
+    .skill-chip:hover {
+        background: white;
+        border-color: var(--secondary-color);
+        transform: translateY(-3px);
+    }
+
+    /* Roadmap Timeline */
+    .roadmap-list {
+        list-style: none;
+        padding: 0;
+        position: relative;
+    }
+
+    .roadmap-list::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: #eee;
+    }
+
+    .roadmap-item {
+        position: relative;
+        padding-left: 60px;
+        margin-bottom: 2.5rem;
+    }
+
+    .roadmap-item::before {
+        content: '';
+        position: absolute;
+        left: 10px;
+        top: 5px;
+        width: 24px;
+        height: 24px;
+        background: var(--secondary-color);
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 0 0 3px #eee;
+    }
+
+    .roadmap-phase {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .roadmap-desc {
+        color: #666;
+        font-size: 1.05rem;
+        line-height: 1.5;
+    }
+
+    /* Links */
+    .resource-links a {
+        display: block;
+        padding: 1.2rem;
+        background: #fff3e0;
+        color: #e65100;
+        border-radius: 10px;
+        text-decoration: none;
+        margin-bottom: 1rem;
+        font-weight: 600;
+        transition: background 0.3s;
+    }
+
+    .resource-links a:hover {
+        background: #ffe0b2;
+    }
+
+    .back-btn {
+        display: inline-block;
+        margin-top: 2rem;
+        color: #666;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .back-btn:hover {
+        color: var(--primary-color);
+    }
+</style>
+
+<div class="resource-header">
+    <div class="container">
+        <span class="resource-icon">{{ resource.icon }}</span>
+        <h1 class="resource-title">{{ resource.title }}</h1>
+        <p class="resource-desc">{{ resource.description }}</p>
+    </div>
+</div>
+
+<div class="container" style="max-width: 900px;">
+
+    <!-- Skills Section -->
+    <div class="section-card">
+        <h2 class="section-title">Key Skills You'll Master</h2>
+        <div class="skills-grid">
+            {% for skill in resource.skills %}
+            <span class="skill-chip">{{ skill }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Roadmap Section -->
+    <div class="section-card">
+        <h2 class="section-title">Your Learning Journey</h2>
+        <ul class="roadmap-list">
+            {% for step in resource.roadmap %}
+            <li class="roadmap-item">
+                <span class="roadmap-phase">{{ step.title }}</span>
+                <p class="roadmap-desc">{{ step.desc }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- External Links -->
+    <div class="section-card">
+        <h2 class="section-title">Essential Resources</h2>
+        <div class="resource-links">
+            {% for link in resource.links %}
+            <a href="{{ link.url }}" target="_blank">🔗 {{ link.text }} &rarr;</a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 4rem;">
+        <a href="{% url 'knowledge_vault' %}" class="back-btn">&larr; Back to Knowledge Vault</a>
+    </div>
+
+</div>
+{% endblock %}

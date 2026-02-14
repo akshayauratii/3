@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal | Alumni Networking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --secondary: #a18cd1;
+            --dark: #2d3436;
+            --light: #f4f7f6;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            background-color: var(--light);
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--dark);
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 1rem 0;
+        }
+
+        .menu-item {
+            padding: 12px 2rem;
+            display: flex;
+            align-items: center;
+            color: #b2bec3;
+            text-decoration: none;
+            transition: 0.3s;
+            font-weight: 400;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border-left: 4px solid var(--secondary);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--light);
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+        }
+
+        /* Utility Classes */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            color: #777;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .sidebar-header h2,
+            .menu-item span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2
+                style="margin: 0; font-size: 1.2rem; background: linear-gradient(135deg, #a18cd1, #4a90e2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                ALUMNI ADMIN</h2>
+        </div>
+        <div class="sidebar-menu">
+            <a href="{% url 'admin_dashboard' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+                <span>Dashboard</span>
+            </a>
+
+            <div
+                style="margin-top: 1rem; margin-bottom: 0.5rem; padding-left: 2rem; font-size: 0.75rem; color: #777; text-transform: uppercase; letter-spacing: 1px;">
+                Directory
+            </div>
+            <a href="{% url 'admin_students_list' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_students_list' %}active{% endif %}">
+                <span>Students</span>
+            </a>
+            <a href="{% url 'admin_alumni_list' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_alumni_list' %}active{% endif %}">
+                <span>Alumni</span>
+            </a>
+            <a href="{% url 'admin_mentors_list' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_mentors_list' %}active{% endif %}">
+                <span>Mentors</span>
+            </a>
+            <a href="{% url 'admin_active_users_list' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_active_users_list' %}active{% endif %}">
+                <span>Active Users</span>
+            </a>
+            <a href="{% url 'admin_quiz_stats' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_quiz_stats' %}active{% endif %}">
+                <span>Quiz Stats</span>
+            </a>
+
+            <div
+                style="margin-top: 1rem; margin-bottom: 0.5rem; padding-left: 2rem; font-size: 0.75rem; color: #777; text-transform: uppercase; letter-spacing: 1px;">
+                Management
+            </div>
+
+            <a href="{% url 'admin_mentor_requests' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_mentor_requests' %}active{% endif %}">
+                <span>Mentor Requests</span>
+            </a>
+            <a href="{% url 'admin_quiz_participation' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_quiz_participation' %}active{% endif %}">
+                <span>Quiz Participation</span>
+            </a>
+
+            <a href="{% url 'admin_reports' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_reports' %}active{% endif %}">
+                <span>Reports</span>
+            </a>
+            <a href="{% url 'admin_settings' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_settings' %}active{% endif %}">
+                <span>Settings</span>
+            </a>
+        </div>
+        <div style="padding: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+            <a href="{% url 'dashboard' %}" class="menu-item" style="color: #ff7675;">
+                <span>Exit Admin</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-nav">
+            <h1 style="font-size: 1.25rem; margin: 0; color: var(--dark);">Admin Panel</h1>
+            <div class="user-pill">
+                <strong>{% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user.username }}{% endif %}</strong>
+                <span style="color: #999;">({{ user.email }})</span>
+            </div>
+        </div>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div
+            style="background: white; padding: 1rem; border-radius: 10px; margin-bottom: 2rem; border-left: 4px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% block admin_content %}
+        {% endblock %}
+    </div>
+
+</body>
+
+</html>

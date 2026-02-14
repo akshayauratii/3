@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 2rem auto; padding: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 style="color: var(--primary-color); margin: 0;">🛠 My Skills</h2>
+        <a href="{% url 'dashboard' %}" class="btn" style="background: #f0f2f5; color: #333;">Back to Dashboard</a>
+    </div>
+
+    <!-- Add Skill Form -->
+    <div
+        style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 2rem;">
+        <h3 style="margin-top: 0;">Add New Skill</h3>
+        <form method="post" style="display: flex; gap: 1rem;">
+            {% csrf_token %}
+            <input type="text" name="skill" placeholder="e.g. Python, React, Leadership" required
+                style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+            <button type="submit" class="btn">Add Skill</button>
+        </form>
+    </div>
+
+    <!-- Skills List -->
+    <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <h3 style="margin-top: 0;">Your Skillset</h3>
+        {% if skills %}
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1rem;">
+            {% for skill in skills %}
+            <span
+                style="background: #e3f2fd; color: #1565c0; padding: 8px 16px; border-radius: 20px; font-weight: 500;">
+                {{ skill }}
+            </span>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color: #777;">No skills added yet. Add some above!</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

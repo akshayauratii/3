@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .os-detail-container {
+        max-width: 900px;
+        margin: 4rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .os-detail-header {
+        border-bottom: 2px solid #eee;
+        padding-bottom: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .os-tag {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .os-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .os-info-item h4 {
+        color: #777;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+    }
+
+    .os-description {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: #444;
+        margin-bottom: 3rem;
+    }
+
+    .back-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+</style>
+
+<div class="container" style="padding-top: 2rem;">
+    <a href="{% url 'open_source' %}" class="back-link">&larr; Back to Innovation Hub</a>
+</div>
+
+<div class="os-detail-container">
+    <div class="os-detail-header">
+        <span class="os-tag" style="background: #e1f5fe; color: #0288d1;">{{ item.type }}</span>
+        <h1 style="font-size: 2.5rem; color: #333;">{{ item.title }}</h1>
+    </div>
+
+    <div class="os-info-grid">
+        <div class="os-info-item">
+            <h4>Participants</h4>
+            <p style="font-weight: 600;">{{ item.participants }}</p>
+        </div>
+        <div class="os-info-item">
+            <h4>Status</h4>
+            <p style="font-weight: 600;">{{ item.status }}</p>
+        </div>
+    </div>
+
+    <div class="os-description">
+        {{ item.details }}
+    </div>
+
+    <div style="text-align: center;">
+        <button class="btn btn-primary" style="padding: 12px 40px; font-size: 1.1rem;">Participate Now</button>
+    </div>
+</div>
+{% endblock %}

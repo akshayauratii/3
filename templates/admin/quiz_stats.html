@@ -1,0 +1,71 @@
+{% extends 'admin/admin_base.html' %}
+{% block admin_content %}
+<div style="margin-bottom: 2rem;">
+    <h2 style="margin-bottom: 1.5rem;">Quiz Analytics</h2>
+
+    <!-- Summary Cards -->
+    <div class="stats-grid" style="margin-bottom: 2rem;">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_attempts }}</div>
+            <div class="stat-label">Total Participants</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" style="color: #ff7675;">{{ below_25 }}</div>
+            <div class="stat-label">Scored &lt; 25</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" style="color: #00cec9;">{{ above_25 }}</div>
+            <div class="stat-label">Scored 25+</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" style="color: #fdcb6e;">{{ full_marks }}</div>
+            <div class="stat-label">Full Marks (30/30)</div>
+        </div>
+    </div>
+
+    <!-- Detailed Table -->
+    <div class="card">
+        <h3>Participant Details</h3>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Participant Name</th>
+                        <th>Score</th>
+                        <th>Attempt Count</th>
+                        <th>Result Status</th>
+                        <th>Date of Attempt</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in participants %}
+                    <tr>
+                        <td>
+                            <div style="font-weight: 500;">{{ p.user.first_name }} {{ p.user.last_name }}</div>
+                            <div style="font-size: 0.8rem; color: #888;">@{{ p.user.username }}</div>
+                        </td>
+                        <td style="font-weight: bold;">{{ p.assessment_marks }}/30</td>
+                        <td>1</td>
+                        <td>
+                            {% if p.assessment_marks == 30 %}
+                            <span class="badge" style="background: #fff8e1; color: #fbc02d;">Full Marks 🏆</span>
+                            {% elif p.assessment_marks >= 25 %}
+                            <span class="badge" style="background: #e0f7fa; color: #0097a7;">Passed (25+)</span>
+                            {% else %}
+                            <span class="badge" style="background: #ffebee; color: #c62828;">Below 25</span>
+                            {% endif %}
+                        </td>
+                        <td><span style="color: #999;">N/A</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 2rem; color: #999;">No quiz participants
+                            found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

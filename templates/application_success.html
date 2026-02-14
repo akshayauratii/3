@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div
+    style="min-height: 80vh; display: flex; align-items: center; justify-content: center; text-align: center; background: #f5f5f5;">
+    <div
+        style="background: white; padding: 4rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 500px;">
+        <div style="font-size: 5rem; margin-bottom: 1rem;">✅</div>
+        <h1 style="color: var(--primary-color); margin-bottom: 1rem;">Application Submitted!</h1>
+        <p style="font-size: 1.2rem; color: #555; margin-bottom: 2rem;">
+            You have successfully applied for the position of <strong>{{ job.title }}</strong> at {{ job.company }}.
+        </p>
+        <p style="color: #888; margin-bottom: 2rem;">Good luck! We will notify you about the next steps.</p>
+
+        <a href="{% url 'ecosystem' %}" style="
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+        ">Back to Ecosystem</a>
+    </div>
+</div>
+{% endblock %}

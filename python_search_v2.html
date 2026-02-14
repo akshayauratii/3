@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Networking Portal</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --accent-color: #ff9a9e;
+            --text-color: #333;
+            --bg-color: #f8f9fa;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        nav {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s, transform 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.active {
+            color: white;
+            font-weight: 700;
+            border-bottom: 2px solid white;
+            padding-bottom: 2px;
+        }
+
+        .btn-nav {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-nav:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .nav-mission-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.8rem;
+            max-width: 400px;
+            text-align: center;
+            line-height: 1.2;
+            display: none;
+            /* Hidden by default on small screens */
+        }
+
+        @media (min-width: 1100px) {
+            .nav-mission-text {
+                display: block;
+            }
+        }
+
+        /* Content Wrapper */
+        .content {
+            flex: 1;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            margin: 0 0.5rem;
+        }
+
+        /* Utility Classes */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.3);
+        }
+
+        /* Form Styles */
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 2rem auto;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        /* Flash Messages */
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="nav-brand">Alumni Networking Portal</div>
+        <div class="nav-links">
+            <a href="/"
+                class="">Home</a>
+            <a href="/about/"
+                class="">About</a>
+            <a href="/contact/"
+                class="">Contact</a>
+            <a href="/impact_stories/"
+                class="">Impact Stories</a>
+
+            <a href="/knowledge_vault/"
+                class="active">Knowledge
+                Vault</a>
+
+
+            
+            <a href="/register/"
+                class="btn-nav ">Register</a>
+            <a href="/login/"
+                class="btn-nav ">Login</a>
+            
+        </div>
+    </nav>
+
+    <div class="content">
+        
+
+        
+<style>
+    /* Digital Brochure Styles */
+    :root {
+        --kv-primary: #1a237e;
+        --kv-secondary: #0d47a1;
+        --kv-accent: #ffd700;
+        --kv-text: #37474f;
+        --kv-bg: #f5f5f5;
+    }
+
+    body {
+        background-color: var(--kv-bg);
+    }
+
+    .booklet-container {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* Page Sections */
+    .brochure-page {
+        min-height: 100vh;
+        padding: 6rem 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        /* Scroll Snap Effect */
+        scroll-snap-align: start;
+        transition: background 0.5s;
+    }
+
+    /* Typography */
+    .kv-heading {
+        font-family: 'Outfit', serif;
+        /* Use a serif if available, otherwise fallback */
+        font-size: 3.5rem;
+        color: var(--kv-primary);
+        margin-bottom: 2rem;
+        text-align: center;
+        position: relative;
+    }
+
+    .kv-heading::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 5px;
+        background: var(--kv-accent);
+        margin: 1rem auto;
+    }
+
+    .kv-subheading {
+        font-size: 1.5rem;
+        color: #546e7a;
+        margin-bottom: 3rem;
+        text-align: center;
+        max-width: 800px;
+        line-height: 1.6;
+    }
+
+    .kv-quote {
+        font-style: italic;
+        font-size: 1.8rem;
+        color: var(--kv-secondary);
+        text-align: center;
+        margin: 4rem 0;
+        padding: 0 2rem;
+        border-left: 5px solid var(--kv-accent);
+    }
+
+    /* Cards */
+    .kv-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2.5rem;
+        width: 100%;
+        max-width: 1200px;
+    }
+
+    .kv-card {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border-top: 5px solid var(--kv-primary);
+        transition: transform 0.3s;
+    }
+
+    .kv-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .kv-card h3 {
+        color: var(--kv-primary);
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .kv-card p {
+        color: var(--kv-text);
+        line-height: 1.7;
+    }
+
+    /* Resource Links */
+    .resource-link {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: #e8eaf6;
+        border-radius: 8px;
+        color: var(--kv-primary);
+        text-decoration: none;
+        margin-top: 1rem;
+        font-weight: 600;
+        transition: background 0.2s;
+    }
+
+    .resource-link:hover {
+        background: #c5cae9;
+    }
+
+    /* Call to Action */
+    .cta-container {
+        text-align: center;
+        margin-top: 3rem;
+    }
+
+    .kv-btn {
+        display: inline-block;
+        background: var(--kv-primary);
+        color: white;
+        padding: 1rem 2.5rem;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .kv-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(26, 35, 126, 0.4);
+    }
+
+    /* Section Specifics */
+    #guidance {
+        background: white;
+    }
+
+    #career-paths {
+        background: #e3f2fd;
+    }
+
+    #mentorship {
+        background: #fffde7;
+    }
+
+    #networking {
+        background: white;
+    }
+
+    #stories-preview {
+        background-color: #fce4ec;
+    }
+
+    /* Icons */
+    .kv-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="booklet-container">
+
+    <!-- PAGE 1: Introduction -->
+    <section class="brochure-page" id="guidance">
+        <h1 class="kv-heading">Knowledge Vault</h1>
+        <p class="kv-subheading">Your Academic & Professional Compass. Empowering students with expert guidance, clear
+            career pathways, and real-world insights.</p>
+
+        <div class="kv-quote">
+            "Education is not the filling of a pail, but the lighting of a fire." - W.B. Yeats
+        </div>
+
+        <div class="kv-grid">
+            <div class="kv-card">
+                <div class="kv-icon">🧭</div>
+                <h3>Expert Guidance</h3>
+                <p>Navigate your academic journey with advice from those who have walked the path before you. Find
+                    clarity in chaos.</p>
+            </div>
+            <div class="kv-card">
+                <div class="kv-icon">📚</div>
+                <h3>Curated Resources</h3>
+                <p>Access exclusive PDFs, checklists, and guides tailored for skill development and industry readiness.
+                </p>
+            </div>
+            <div class="kv-card">
+                <div class="kv-icon">💡</div>
+                <h3>Real-World Insights</h3>
+                <p>Bridge the gap between campus and corporate. Learn what textbooks don't teach you about the industry.
+                </p>
+            </div>
+        </div>
+
+        <div class="cta-container">
+            <p style="margin-bottom: 1rem; color: #888;">Scroll to explore your future &darr;</p>
+        </div>
+    </section>
+
+    <!-- PAGE 2: Career Pathways -->
+    <section class="brochure-page" id="career-paths">
+        <h2 class="kv-heading">Career Pathways</h2>
+        <p class="kv-subheading">Visualize your trajectory. Whether you're coding the future or designing it, we have a
+            roadmap for you.</p>
+
+        <!-- Search Bar -->
+        <form method="GET" action="/knowledge_vault/#career-paths"
+            style="margin-bottom: 3rem; width: 100%; max-width: 600px; display: flex; gap: 10px;">
+            <input type="text" name="q" value="python"
+                placeholder="Search resources, skills, or roles..."
+                style="flex: 1; padding: 1rem 1.5rem; border-radius: 30px; border: 2px solid #e0e0e0; font-size: 1rem; outline: none; transition: border-color 0.3s;">
+            <button type="submit" class="kv-btn"
+                style="border: none; cursor: pointer; padding: 1rem 2rem;">Search</button>
+        </form>
+
+        <div class="kv-grid">
+            
+            <div class="kv-card">
+                <div class="kv-icon">💻</div>
+                <h3>Full Stack Development</h3>
+                <p>Become a versatile developer capable of building end-to-end web applications. Total mastery of both frontend user interfaces and backend server …</p>
+
+                <div style="margin-top: 1rem; margin-bottom: 1rem;">
+                    
+                    <span
+                        style="background: #e3f2fd; color: var(--kv-primary); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px;">{{
+                        skill }}</span>
+                    
+                    <span
+                        style="background: #e3f2fd; color: var(--kv-primary); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px;">{{
+                        skill }}</span>
+                    
+                    <span
+                        style="background: #e3f2fd; color: var(--kv-primary); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px;">{{
+                        skill }}</span>
+                    
+                    <span>+more</span>
+                </div>
+
+                <a href="/knowledge_vault/resource/fullstack/" class="resource-link">📄 View Roadmap & Resources</a>
+            </div>
+            
+            <div class="kv-card">
+                <div class="kv-icon">📊</div>
+                <h3>Data Science &amp; AI</h3>
+                <p>Unlock the power of data. Learn to analyze complex datasets, build machine learning models, and derive actionable insights for businesses.</p>
+
+                <div style="margin-top: 1rem; margin-bottom: 1rem;">
+                    
+                    <span
+                        style="background: #e3f2fd; color: var(--kv-primary); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px;">{{
+                        skill }}</span>
+                    
+                    <span
+                        style="background: #e3f2fd; color: var(--kv-primary); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px;">{{
+                        skill }}</span>
+                    
+                    <span
+                        style="background: #e3f2fd; color: var(--kv-primary); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px;">{{
+                        skill }}</span>
+                    
+                    <span>+more</span>
+                </div>
+
+                <a href="/knowledge_vault/resource/datascience/" class="resource-link">📄 View Roadmap & Resources</a>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- PAGE 3: Mentorship & Networking -->
+    <section class="brochure-page" id="mentorship">
+        <h2 class="kv-heading">Mentorship & Networking</h2>
+        <p class="kv-subheading">"If I have seen further, it is by standing on the shoulders of giants." Connect with
+            your giants today.</p>
+
+        <div class="kv-grid">
+            <div class="kv-card">
+                <h3>👥 Find a Mentor</h3>
+                <p>Search our alumni database by industry, company, or skill. Request mentorship sessions with a click.
+                </p>
+            </div>
+            <div class="kv-card">
+                <h3>🤝 Networking Events</h3>
+                <p>Join 'Chai Time' virtual meetups and local alumni gatherings. Build relationships that last a
+                    lifetime.</p>
+            </div>
+            <div class="kv-card">
+                <h3>💼 Industry Exposure</h3>
+                <p>Virtual internships, webinars with industry leaders, and behind-the-scenes company tours.</p>
+            </div>
+        </div>
+
+        <div class="cta-container">
+            <a href="/dashboard/" class="kv-btn">Go to Dashboard to Connect</a>
+        </div>
+    </section>
+
+    <!-- PAGE 4: Alumni Success & Access -->
+    <section class="brochure-page" id="stories-preview">
+        <h2 class="kv-heading">Join the Legacy</h2>
+        <p class="kv-subheading">Every expert was once a beginner. Read how our alumni turned their dreams into reality.
+        </p>
+
+        <div class="kv-grid">
+            <div class="kv-card" style="border-top-color: #d81b60;">
+                <div class="kv-icon">🚀</div>
+                <h3>Alumni Success Stories</h3>
+                <p>Dive into detailed interviews and case studies of successful career transitions and startup launches.
+                </p>
+                <a href="/impact_stories/" class="resource-link">🌟 Read Impact Stories</a>
+            </div>
+            <div class="kv-card" style="border-top-color: #8e24aa;">
+                <div class="kv-icon">🎓</div>
+                <h3>Alumni Review</h3>
+                <p>See what top universities and companies our alumni have reached.</p>
+            </div>
+        </div>
+
+        <div class="kv-quote">
+            "Your network is your net worth. Build it wiseley."
+        </div>
+
+        <div class="cta-container">
+            <h3 style="margin-bottom: 1rem; color: var(--kv-primary);">Ready to start your journey?</h3>
+            <a href="/register/" class="kv-btn">Join the Portal Now</a>
+        </div>
+    </section>
+
+</div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Alumni Networking Portal. All rights reserved.</p>
+        <p>
+            <a href="#">About</a> |
+            <a href="#">Quick Links</a> |
+            <a href="#">Follow Us</a> |
+            <a href="#">Contact Info</a>
+        </p>
+    </footer>
+
+</body>
+
+</html>

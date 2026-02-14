@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Networking Portal</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --accent-color: #ff9a9e;
+            --text-color: #333;
+            --bg-color: #f8f9fa;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        nav {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s, transform 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.active {
+            color: white;
+            font-weight: 700;
+            border-bottom: 2px solid white;
+            padding-bottom: 2px;
+        }
+
+        .btn-nav {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-nav:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .nav-mission-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.8rem;
+            max-width: 400px;
+            text-align: center;
+            line-height: 1.2;
+            display: none;
+            /* Hidden by default on small screens */
+        }
+
+        @media (min-width: 1100px) {
+            .nav-mission-text {
+                display: block;
+            }
+        }
+
+        /* Content Wrapper */
+        .content {
+            flex: 1;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            margin: 0 0.5rem;
+        }
+
+        /* Utility Classes */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.3);
+        }
+
+        /* Form Styles */
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 2rem auto;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        /* Flash Messages */
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="nav-brand">Alumni Networking Portal</div>
+        <div class="nav-links">
+            <a href="{% url 'home' %}"
+                class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+            <a href="{% url 'about' %}"
+                class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a>
+            <a href="{% url 'contact' %}"
+                class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a>
+            <a href="{% url 'impact_stories' %}"
+                class="{% if request.resolver_match.url_name == 'impact_stories' %}active{% endif %}">Impact Stories</a>
+
+            <a href="{% url 'knowledge_vault' %}"
+                class="{% if request.resolver_match.url_name == 'knowledge_vault' %}active{% endif %}">Knowledge
+                Vault</a>
+
+
+            {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}"
+                class="btn-nav {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
+            <a href="{% url 'logout' %}" class="btn-nav">Logout</a>
+            {% else %}
+            <a href="{% url 'register' %}"
+                class="btn-nav {% if request.resolver_match.url_name == 'register' %}active{% endif %}">Register</a>
+            <a href="{% url 'login' %}"
+                class="btn-nav {% if request.resolver_match.url_name == 'login' %}active{% endif %}">Login</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="content">
+        {% if messages %}
+        <ul class="messages container">
+            {% for message in messages %}
+            <li class="message {{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Alumni Networking Portal. All rights reserved.</p>
+        <p>
+            <a href="#">About</a> |
+            <a href="#">Quick Links</a> |
+            <a href="#">Follow Us</a> |
+            <a href="#">Contact Info</a>
+        </p>
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 2rem auto; padding: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 style="color: var(--primary-color); margin: 0;">🗓️ Upcoming Interviews & Events</h2>
+        <a href="{% url 'dashboard' %}" class="btn" style="background: #f0f2f5; color: #333;">Back to Dashboard</a>
+    </div>
+
+    <div class="events-list">
+        {% for app in upcoming %}
+        <div
+            style="background: white; padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid #ff6b6b; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <h3 style="margin: 0; font-size: 1.2rem;">Interview with {{ app.opportunity.company }}</h3>
+                <p style="margin: 0.5rem 0 0; color: #666;">Role: {{ app.opportunity.title }}</p>
+                <div style="margin-top: 1rem; display: flex; gap: 1rem; font-size: 0.9rem; color: #555;">
+                    <span>📍 {{ app.opportunity.location }}</span>
+                    <span>🕒 {{ app.interview_date|time:"H:i" }}</span>
+                </div>
+            </div>
+
+            <div style="text-align: center; background: #fff0f0; padding: 10px 20px; border-radius: 8px;">
+                <span style="font-size: 1.5rem; font-weight: bold; color: #ff6b6b; display: block;">{{
+                    app.interview_date|date:"d" }}</span>
+                <span style="color: #ff6b6b; text-transform: uppercase; font-size: 0.8rem;">{{
+                    app.interview_date|date:"M" }}</span>
+            </div>
+        </div>
+        {% empty %}
+        <div style="text-align: center; padding: 3rem; background: white; border-radius: 12px;">
+            <p style="font-size: 1.1rem; color: #666;">No upcoming interviews or events scheduled.</p>
+            <a href="{% url 'job_collections' %}" class="btn" style="margin-top: 1rem; display: inline-block;">Browse
+                Opportunities</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

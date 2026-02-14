@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 2rem auto; padding: 2rem;">
+    <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <h2 style="color: var(--primary-color); text-align: center; margin-bottom: 1.5rem;">Post a New Opportunity 🚀
+        </h2>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label style="font-weight: 600;">Job/Internship Title</label>
+                {{ form.title }}
+            </div>
+
+            <div class="row" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                <div class="col" style="flex: 1;">
+                    <label style="font-weight: 600;">Company</label>
+                    {{ form.company }}
+                </div>
+                <div class="col" style="flex: 1;">
+                    <label style="font-weight: 600;">Location</label>
+                    {{ form.location }}
+                </div>
+            </div>
+
+            <div class="row" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                <div class="col" style="flex: 1;">
+                    <label style="font-weight: 600;">Type</label>
+                    {{ form.type }}
+                </div>
+                <div class="col" style="flex: 1;">
+                    <label style="font-weight: 600;">Category</label>
+                    {{ form.category }}
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label style="font-weight: 600;">Description</label>
+                {{ form.description }}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label style="font-weight: 600;">Minimum Assessment Score Required (0-30)</label>
+                {{ form.min_assessment_score }}
+                <small style="color: #666; display: block; margin-top: 5px;">Students with a lower score won't be able
+                    to apply.</small>
+            </div>
+
+            <button type="submit" class="btn"
+                style="width: 100%; background: var(--secondary-color); color: white; padding: 12px; font-size: 1.1rem; border-radius: 8px;">Post
+                Opportunity</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-top: 5px;
+    }
+</style>
+{% endblock %}

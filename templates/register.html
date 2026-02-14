@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2 class="section-title">Join the Network</h2>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div style="color: red; font-size: 0.8rem; margin-top: 5px;">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div id="admin-hint"
+                style="display: none; margin-bottom: 1rem; padding: 10px; background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 4px;">
+                <small style="color: #ef6c00; font-weight: 600;">
+                    Note: Admin registration is restricted to: <br>
+                    AKSHAYA, Ramya, DIVYA, Harini, Akanksha
+                </small>
+            </div>
+
+            <button type="submit" class="btn" style="width: 100%;">Register</button>
+        </form>
+        <p style="text-align: center; margin-top: 1rem;">
+            Already have an account? <a href="{% url 'login' %}" style="color: var(--secondary-color);">Login here</a>
+        </p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const userTypeField = document.querySelector('select[name="user_type"]');
+        const adminHint = document.getElementById('admin-hint');
+
+        function toggleHint() {
+            if (userTypeField.value === 'admin') {
+                adminHint.style.display = 'block';
+            } else {
+                adminHint.style.display = 'none';
+            }
+        }
+
+        if (userTypeField) {
+            userTypeField.addEventListener('change', toggleHint);
+            toggleHint(); // Check on load
+        }
+    });
+</script>
+{% endblock %}

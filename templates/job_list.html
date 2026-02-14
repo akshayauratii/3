@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 900px; margin: 2rem auto; padding: 2rem;">
+    <h2 style="margin-bottom: 2rem; color: #333;">{{ title }}</h2>
+
+    <!-- Search Bar -->
+    <form method="GET" style="margin-bottom: 2rem; display: flex; gap: 10px;">
+        <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search by title, company..."
+            style="flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+        <button type="submit" class="btn" style="padding: 0 25px;">Search</button>
+    </form>
+
+    <!-- Govt Notifications (Only for Government Jobs) -->
+    {% if category == 'govt' %}
+    <div
+        style="background: #e3f2fd; border-left: 5px solid #2196f3; padding: 1rem; margin-bottom: 2rem; border-radius: 4px;">
+        <h4 style="margin: 0 0 0.5rem; color: #0d47a1;">📢 Government Job Notifications</h4>
+        <ul style="margin: 0; padding-left: 1.2rem; color: #1565c0;">
+            <li>New UPSC notification released today.</li>
+            <li>Railway Recruitment Board exams scheduled for next month.</li>
+            <li>SSC CGL applications closing soon.</li>
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Job List -->
+    <div class="jobs-list">
+        {% for job in jobs %}
+        <div
+            style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 1.5rem; transition: transform 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+                <div>
+                    <h3 style="margin: 0 0 0.5rem; color: var(--primary-color);">{{ job.title }}</h3>
+                    <p style="margin: 0; font-weight: bold; color: #555;">{{ job.company }}</p>
+                    <p style="margin: 0.5rem 0; color: #777;">📍 {{ job.location }}</p>
+                </div>
+                <a href="{% url 'apply_for_opportunity' job.id %}" class="btn" style="font-size: 0.9rem;">Apply Now</a>
+            </div>
+            <p style="margin-top: 1rem; color: #666; line-height: 1.5;">{{ job.description|truncatewords:30 }}</p>
+            <div style="margin-top: 1rem; font-size: 0.85rem; color: #999;">
+                Posted {{ job.created_at|timesince }} ago
+            </div>
+        </div>
+        {% empty %}
+        <div style="text-align: center; color: #777; padding: 3rem;">
+            <p style="font-size: 1.2rem;">No jobs found matching your criteria.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'jobs_home' %}"
+        style="display: inline-block; margin-top: 2rem; color: #777; text-decoration: none;">&larr; Back to Jobs
+        Selection</a>
+</div>
+{% endblock %}

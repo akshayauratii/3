@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .selection-container {
+        max-width: 1000px;
+        margin: 4rem auto;
+        padding: 0 2rem;
+        text-align: center;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        margin-bottom: 3rem;
+        color: #333;
+    }
+
+    .cards-wrapper {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        flex-wrap: wrap;
+    }
+
+    .selection-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2.5rem;
+        width: 300px;
+        text-decoration: none;
+        color: inherit;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-top: 5px solid transparent;
+    }
+
+    .selection-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-icon-lg {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .card-head {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .paid-card {
+        border-top-color: #F7B731;
+    }
+
+    .unpaid-card {
+        border-top-color: #A55EEA;
+    }
+</style>
+
+<div class="selection-container">
+    <h1 class="page-title">Internship Opportunities 🎓</h1>
+
+    <div class="cards-wrapper">
+        <a href="{% url 'internship_list' stipend_type='paid' %}" class="selection-card paid-card">
+            <div class="card-icon-lg">💰</div>
+            <div class="card-head">Paid Internships</div>
+            <p style="color: #666;">Earn while you learn. Software & Hardware domains available.</p>
+        </a>
+
+        <a href="{% url 'internship_list' stipend_type='unpaid' %}" class="selection-card unpaid-card">
+            <div class="card-icon-lg">🌱</div>
+            <div class="card-head">Unpaid Internships</div>
+            <p style="color: #666;">Focus on learning and gaining valuable industry experience.</p>
+        </a>
+    </div>
+
+    <a href="{% url 'ecosystem' %}"
+        style="display: inline-block; margin-top: 3rem; color: #777; text-decoration: none;">&larr; Back to Brochure</a>
+</div>
+{% endblock %}

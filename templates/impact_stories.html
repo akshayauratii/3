@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .story-section {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .story-section:nth-child(odd) {
+        background-color: #fff;
+    }
+
+    .story-section:nth-child(even) {
+        background-color: #f8f9fa;
+        flex-direction: row-reverse;
+    }
+
+    .story-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        max-width: 1200px;
+        width: 100%;
+        gap: 4rem;
+        z-index: 2;
+    }
+
+    .story-section:nth-child(even) .story-container {
+        flex-direction: row-reverse;
+    }
+
+    .story-visual {
+        flex: 1;
+        min-width: 300px;
+        position: relative;
+    }
+
+    .story-img {
+        width: 100%;
+        height: 500px;
+        object-fit: cover;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        transition: transform 0.5s ease;
+    }
+
+    .story-section:hover .story-img {
+        transform: scale(1.02);
+    }
+
+    .story-text {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    .grad-year-pill {
+        display: inline-block;
+        background: var(--secondary-color);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .story-heading {
+        font-size: 3rem;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .alumni-name {
+        font-size: 1.5rem;
+        color: #555;
+        margin-bottom: 2rem;
+        font-weight: 500;
+    }
+
+    .story-body {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #666;
+        margin-bottom: 2rem;
+    }
+
+    .quote-mark {
+        font-size: 6rem;
+        color: rgba(0, 0, 0, 0.05);
+        position: absolute;
+        top: -40px;
+        left: -20px;
+        z-index: -1;
+        font-family: serif;
+    }
+
+    @media (max-width: 768px) {
+        .story-section {
+            padding: 3rem 1rem;
+        }
+
+        .story-container {
+            flex-direction: column !important;
+            gap: 2rem;
+        }
+
+        .story-img {
+            height: 300px;
+        }
+
+        .story-heading {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<div style="background: #111; color: white; padding: 4rem 0; text-align: center;">
+    <h1 style="font-size: 3rem; margin-bottom: 1rem;">Impact Stories</h1>
+    <p style="font-size: 1.2rem; opacity: 0.8;">Real stories. Real impact. The journey of our alumni.</p>
+</div>
+
+{% for story in stories %}
+<section class="story-section">
+    <div class="story-container">
+        <div class="story-visual">
+            {% if story.image %}
+            <img src="{{ story.image.url }}" alt="{{ story.title }}" class="story-img">
+            {% else %}
+            <!-- Placeholder if no image -->
+            <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+                alt="Placeholder" class="story-img">
+            {% endif %}
+        </div>
+        <div class="story-text" style="position: relative;">
+            <div class="quote-mark">“</div>
+            <span class="grad-year-pill">Class of {{ story.graduation_year }}</span>
+            <h2 class="story-heading">{{ story.title }}</h2>
+            <h3 class="alumni-name">{{ story.alumni.user.get_full_name|default:story.alumni.user.username }}</h3>
+            <p class="story-body">{{ story.story }}</p>
+        </div>
+    </div>
+</section>
+{% empty %}
+<div style="text-align: center; padding: 5rem;">
+    <h2>No stories found yet.</h2>
+    <p>Check back later for inspiring journeys.</p>
+</div>
+{% endfor %}
+
+{% endblock %}

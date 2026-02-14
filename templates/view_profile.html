@@ -1,0 +1,562 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="profile-page">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-cover"></div>
+        <div class="profile-info-wrapper">
+            <div class="profile-avatar-large">
+                {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" alt="{{ profile_user.username }}">
+                {% else %}
+                <span class="avatar-initial">{{ profile_user.username|first|upper }}</span>
+                {% endif %}
+            </div>
+            <div class="profile-details">
+                <h1 class="profile-name">{{ profile_user.first_name|default:profile_user.username }} {{
+                    profile_user.last_name }}</h1>
+                <span class="profile-type-badge">{{ profile.get_user_type_display }}</span>
+                {% if profile.bio %}
+                <p class="profile-bio">{{ profile.bio }}</p>
+                {% endif %}
+            </div>
+            <div class="profile-actions">
+                {% if is_own_profile %}
+                <a href="{% url 'edit_profile' %}" class="btn-edit-profile">✏️ Edit Profile</a>
+                {% else %}
+                {% if is_connected %}
+                <button class="btn-connected" disabled>
+                    <span>✅</span> Connected
+                </button>
+                {% else %}
+                <button class="btn-connect" id="connectBtn" onclick="connectWithUser()">
+                    <span>🤝</span> Connect
+                </button>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="profile-stats">
+        <div class="stat-item">
+            <span class="stat-number">{{ connection_count }}</span>
+            <span class="stat-label">Connections</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">{{ user_posts|length }}</span>
+            <span class="stat-label">Posts</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">{{ profile.assessment_marks }}</span>
+            <span class="stat-label">Quiz Score</span>
+        </div>
+    </div>
+
+    <!-- Content Grid -->
+    <div class="profile-content">
+        <!-- Left Column: Info -->
+        <div class="profile-card">
+            <h3 class="card-title">📋 About</h3>
+
+            <!-- User Type / Role -->
+            <div class="info-section">
+                <div class="info-row">
+                    <span class="info-icon">🎓</span>
+                    <div>
+                        <span class="info-label">Role</span>
+                        <span class="info-value">
+                            {% if profile.user_type == 'student' %}
+                            <span class="role-badge role-student">🧑‍🎓 Student</span>
+                            {% elif profile.user_type == 'alumni' %}
+                            <span class="role-badge role-alumni">🎓 Alumni</span>
+                            {% elif profile.user_type == 'mentor' %}
+                            <span class="role-badge role-mentor">🧑‍🏫 Mentor</span>
+                            {% else %}
+                            <span class="role-badge">{{ profile.get_user_type_display }}</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <span class="info-icon">📧</span>
+                    <div>
+                        <span class="info-label">Email</span>
+                        <span class="info-value">{{ profile_user.email|default:"Not provided" }}</span>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <span class="info-icon">📅</span>
+                    <div>
+                        <span class="info-label">Joined</span>
+                        <span class="info-value">{{ profile_user.date_joined|date:"F Y" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bio -->
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.8rem; color: #333;">📝 Bio</h4>
+            {% if profile.bio %}
+            <p
+                style="color: #555; line-height: 1.6; background: #f8f9fe; padding: 1rem; border-radius: 10px; border-left: 3px solid #667eea;">
+                {{ profile.bio }}</p>
+            {% else %}
+            <p style="color: #999; font-style: italic; background: #f8f9fe; padding: 1rem; border-radius: 10px;">No bio
+                added yet.</p>
+            {% endif %}
+
+            <!-- Skills -->
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.8rem; color: #333;">🛠️ Skills</h4>
+            {% if skills_list %}
+            <div class="skills-tags">
+                {% for skill in skills_list %}
+                <span class="skill-tag">{{ skill }}</span>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="color: #999; font-style: italic; font-size: 0.9rem;">No skills added yet.</p>
+            {% endif %}
+
+            {% if profile.government_internships %}
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: #333;">🏛️ Government Experience</h4>
+            <p
+                style="color: #555; font-size: 0.9rem; background: #f0fdf4; padding: 0.8rem; border-radius: 8px; border-left: 3px solid #00b894;">
+                {{ profile.government_internships }}</p>
+            {% endif %}
+
+            {% if profile.private_internships_jobs %}
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: #333;">💼 Private Sector</h4>
+            <p
+                style="color: #555; font-size: 0.9rem; background: #fef3f2; padding: 0.8rem; border-radius: 8px; border-left: 3px solid #ef4444;">
+                {{ profile.private_internships_jobs }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Right Column: Posts -->
+        <div class="profile-card">
+            <h3 class="card-title">📝 Recent Posts</h3>
+            {% for post in user_posts %}
+            <div class="mini-post">
+                <div class="mini-post-header">
+                    <span class="mini-post-category">{{ post.get_category_display }}</span>
+                    <span class="mini-post-time">{{ post.created_at|timesince }} ago</span>
+                </div>
+                <p class="mini-post-content">{{ post.content|truncatewords:30 }}</p>
+                {% if post.image %}
+                <img src="{{ post.image.url }}" alt="Post" class="mini-post-image">
+                {% endif %}
+                <div class="mini-post-footer">
+                    <span>❤️ {{ post.likes.count }} likes</span>
+                </div>
+            </div>
+            {% empty %}
+            <p style="color: #999; text-align: center; padding: 2rem; font-style: italic;">No posts yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function connectWithUser() {
+        const btn = document.getElementById('connectBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳</span> Connecting...';
+
+        fetch("{% url 'connect_user' profile_user.username %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'connected' || data.status === 'already') {
+                    btn.innerHTML = '<span>✅</span> Connected';
+                    btn.classList.add('connected');
+                    btn.style.background = 'linear-gradient(135deg, #00b894, #55efc4)';
+                    btn.style.transform = 'scale(1.05)';
+                    setTimeout(() => btn.style.transform = 'scale(1)', 300);
+                }
+            })
+            .catch(() => {
+                btn.innerHTML = '<span>🤝</span> Connect';
+                btn.disabled = false;
+            });
+    }
+</script>
+
+<style>
+    .profile-page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1rem;
+    }
+
+    /* ====== HEADER ====== */
+    .profile-header {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-cover {
+        height: 160px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        position: relative;
+    }
+
+    .profile-cover::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: linear-gradient(to top, white, transparent);
+    }
+
+    .profile-info-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 0 2rem 1.5rem;
+        margin-top: -50px;
+        position: relative;
+        z-index: 2;
+        flex-wrap: wrap;
+    }
+
+    .profile-avatar-large {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .profile-avatar-large img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .avatar-initial {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: white;
+    }
+
+    .profile-details {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .profile-name {
+        font-size: 1.6rem;
+        margin: 0 0 0.3rem;
+        color: #222;
+    }
+
+    .profile-type-badge {
+        display: inline-block;
+        padding: 4px 14px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .profile-bio {
+        margin: 0.8rem 0 0;
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .profile-actions {
+        flex-shrink: 0;
+    }
+
+    /* ====== BUTTONS ====== */
+    .btn-connect {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 28px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-connect:hover {
+        transform: translateY(-2px) scale(1.03);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-connected {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 28px;
+        background: linear-gradient(135deg, #00b894, #55efc4);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: default;
+        font-family: inherit;
+    }
+
+    .btn-edit-profile {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 24px;
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-edit-profile:hover {
+        background: #667eea;
+        color: white;
+    }
+
+    /* ====== STATS ====== */
+    .profile-stats {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stat-item {
+        flex: 1;
+        background: white;
+        border-radius: 14px;
+        padding: 1.2rem;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s;
+    }
+
+    .stat-item:hover {
+        transform: translateY(-3px);
+    }
+
+    .stat-number {
+        display: block;
+        font-size: 1.8rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+
+    /* ====== CONTENT GRID ====== */
+    .profile-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    @media (max-width: 700px) {
+        .profile-content {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-stats {
+            flex-direction: column;
+        }
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-title {
+        margin: 0 0 1rem;
+        font-size: 1.1rem;
+        color: #333;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    /* ====== SKILLS ====== */
+    .skills-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .skill-tag {
+        padding: 5px 14px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        color: #667eea;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border: 1px solid rgba(102, 126, 234, 0.2);
+    }
+
+    /* ====== INFO SECTION ====== */
+    .info-section {
+        background: #f8f9fe;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-icon {
+        font-size: 1.2rem;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        flex-shrink: 0;
+    }
+
+    .info-label {
+        display: block;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #999;
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+
+    .info-value {
+        display: block;
+        font-size: 0.9rem;
+        color: #333;
+        font-weight: 500;
+    }
+
+    .role-badge {
+        display: inline-block;
+        padding: 3px 12px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    .role-student {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        color: #1565c0;
+    }
+
+    .role-alumni {
+        background: linear-gradient(135deg, #f3e5f5, #ce93d8);
+        color: #7b1fa2;
+    }
+
+    .role-mentor {
+        background: linear-gradient(135deg, #e8f5e9, #a5d6a7);
+        color: #2e7d32;
+    }
+
+    /* ====== MINI POSTS ====== */
+    .mini-post {
+        padding: 1rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .mini-post:last-child {
+        border-bottom: none;
+    }
+
+    .mini-post-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .mini-post-category {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #764ba2;
+    }
+
+    .mini-post-time {
+        font-size: 0.7rem;
+        color: #aaa;
+    }
+
+    .mini-post-content {
+        margin: 0;
+        color: #444;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .mini-post-image {
+        width: 100%;
+        border-radius: 8px;
+        margin-top: 0.5rem;
+        max-height: 150px;
+        object-fit: cover;
+    }
+
+    .mini-post-footer {
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+        color: #999;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block admin_content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h2 style="margin: 0;">User Management</h2>
+            <p style="color: #777; margin-top: 5px;">Manage all platform users and their access roles.</p>
+        </div>
+        <div
+            style="background: var(--light); padding: 8px 15px; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+            <input type="text" placeholder="Search users..."
+                style="border: none; background: transparent; outline: none; font-family: inherit;">
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Joined</th>
+                <th>Current Role</th>
+                <th>Change Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for profile in profiles %}
+            <tr>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div
+                            style="width: 35px; height: 35px; border-radius: 50%; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; color: #777;">
+                            {{ profile.user.username|make_list|first|upper }}
+                        </div>
+                        <div>
+                            <div style="font-weight: 600;">{{ profile.user.first_name }} {{ profile.user.last_name }}
+                            </div>
+                            <div style="font-size: 0.8rem; color: #999;">{{ profile.user.email }}</div>
+                        </div>
+                    </div>
+                </td>
+                <td style="font-size: 0.9rem; color: #777;">{{ profile.user.date_joined|date:"M d, Y" }}</td>
+                <td>
+                    <span class="badge" style="
+                        {% if profile.user_type == 'admin' %}background: #fee2e2; color: #991b1b;
+                        {% elif profile.user_type == 'mentor' %}background: #e0f2fe; color: #075985;
+                        {% elif profile.user_type == 'alumni' %}background: #fef3c7; color: #92400e;
+                        {% else %}background: #f3f4f6; color: #374151;{% endif %}
+                    ">{{ profile.get_user_type_display }}</span>
+                </td>
+                <td>
+                    <form method="POST" style="display: flex; gap: 5px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_id" value="{{ profile.user.id }}">
+                        <select name="new_role"
+                            style="padding: 5px; border-radius: 5px; border: 1px solid #ddd; font-family: inherit; font-size: 0.85rem;">
+                            <option value="student" {% if profile.user_type=='student' %}selected{% endif %}>Student
+                            </option>
+                            <option value="alumni" {% if profile.user_type=='alumni' %}selected{% endif %}>Alumni
+                            </option>
+                            <option value="mentor" {% if profile.user_type=='mentor' %}selected{% endif %}>Mentor
+                            </option>
+                            <option value="admin" {% if profile.user_type=='admin' %}selected{% endif %}>Admin</option>
+                        </select>
+                        <button type="submit"
+                            style="background: var(--primary); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.85rem;">Update</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

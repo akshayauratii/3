@@ -1,0 +1,35 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block admin_content %}
+<div class="card">
+    <h2>Quiz Participation</h2>
+    <p style="color: #777;">Performance records of students who participated in the qualification quiz.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Email</th>
+                <th>Assessment Marks</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for profile in participants %}
+            <tr>
+                <td>{{ profile.user.get_full_name|default:profile.user.username }}</td>
+                <td style="color: #777;">{{ profile.user.email }}</td>
+                <td style="font-weight: 600; color: var(--primary);">{{ profile.assessment_marks }} / 50</td>
+                <td>
+                    {% if profile.assessment_marks >= 25 %}
+                    <span class="badge" style="background: #e8f5e9; color: #2e7d32;">QUALIFIED</span>
+                    {% else %}
+                    <span class="badge" style="background: #fff3e0; color: #ef6c00;">NOT QUALIFIED</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

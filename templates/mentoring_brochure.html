@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .mentoring-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .mentoring-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+        padding: 3rem;
+        border-radius: 20px;
+        color: white;
+    }
+
+    .mentor-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .mentor-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s;
+        border: 1px solid #f0f0f0;
+    }
+
+    .mentor-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .mentor-header-pic {
+        height: 120px;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .mentor-pic {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        position: absolute;
+        bottom: -40px;
+    }
+
+    .mentor-info {
+        padding: 50px 1.5rem 1.5rem;
+        text-align: center;
+    }
+
+    .mentor-name {
+        font-size: 1.25rem;
+        margin-bottom: 0.25rem;
+        color: #333;
+    }
+
+    .mentor-bio {
+        font-size: 0.9rem;
+        color: #777;
+        margin-bottom: 1rem;
+        min-height: 40px;
+    }
+
+    .mentor-skills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .skill-badge {
+        background: #f0f2f5;
+        color: #555;
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+    }
+
+    .request-btn {
+        background: #a18cd1;
+        color: white;
+        width: 100%;
+        display: block;
+        padding: 10px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+
+    .request-btn:hover {
+        background: #8e7bc3;
+    }
+
+    .status-badge {
+        margin-left: 10px;
+        font-size: 0.8rem;
+        padding: 2px 8px;
+        border-radius: 4px;
+    }
+
+    .status-accepted {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .status-pending {
+        background: #fff3e0;
+        color: #ef6c00;
+    }
+</style>
+
+<div class="mentoring-container">
+    <div class="mentoring-header">
+        <h1>Connect with Mentors 👨‍🏫</h1>
+        <p>Learn from alumni who have walked the path before you.</p>
+    </div>
+
+    <div class="mentor-grid">
+        {% for mentor_wrap in mentors %}
+        <div class="mentor-card">
+            <div class="mentor-header-pic">
+                <div
+                    style="width: 100%; height: 100%; background: linear-gradient(to right, #eef2f3, #8e9eab); opacity: 0.3;">
+                </div>
+                <!-- Skill Match Badge -->
+                <div
+                    style="position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; color: #a18cd1; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid #a18cd1; z-index: 10;">
+                    🎯 {{ mentor_wrap.match_percentage }}% Match
+                </div>
+                {% if mentor_wrap.profile.profile_picture %}
+                <img src="{{ mentor_wrap.profile.profile_picture.url }}" alt="{{ mentor_wrap.profile.user.username }}"
+                    class="mentor-pic">
+                {% else %}
+                <div class="mentor-pic"
+                    style="background: #ddd; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                    👤</div>
+                {% endif %}
+            </div>
+            <div class="mentor-info">
+                <h3 class="mentor-name">{{
+                    mentor_wrap.profile.user.get_full_name|default:mentor_wrap.profile.user.username }}
+                </h3>
+                <p style="font-size: 0.8rem; color: #a18cd1; font-weight: bold; margin-bottom: 0.5rem;">ALUMNI MENTOR
+                </p>
+                <p class="mentor-bio">{{ mentor_wrap.profile.bio|truncatechars:100|default:"Ready to help students
+                    grow." }}
+                </p>
+
+                <div class="mentor-skills">
+                    {% for skill in mentor_wrap.skills_list %}
+                    <span class="skill-badge">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+
+                <a href="{% url 'request_mentor' mentor_wrap.profile.user.id %}" class="request-btn">Request
+                    Connection</a>
+            </div>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <p style="color: #777;">No mentors are currently available for selection.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Active Requests / Chats -->
+    <div style="margin-top: 4rem;">
+        <h2 style="margin-bottom: 1.5rem;">Your Mentorship Threads</h2>
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            {% for req in user.mentor_requests.all %}
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid #eee;">
+                <div>
+                    <strong style="color: #333;">Mentor: {{ req.mentor.username }}</strong>
+                    <span
+                        class="status-badge {% if req.status == 'accepted' %}status-accepted{% else %}status-pending{% endif %}">
+                        {{ req.get_status_display }}
+                    </span>
+                    <p style="margin: 5px 0 0; font-size: 0.9rem; color: #777;">{{ req.message|truncatechars:50 }}</p>
+                </div>
+                <a href="{% url 'mentor_chat' req.id %}" class="btn" style="background: #f0f2f5; color: #333;">Open
+                    Chat</a>
+            </div>
+            {% empty %}
+            <p style="color: #999; text-align: center;">You haven't requested any mentors yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,421 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 2rem auto; padding: 2rem;">
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <a href="{% url 'dashboard' %}"
+            style="display: inline-block; margin-bottom: 1rem; color: var(--primary-color); text-decoration: none; font-weight: 500;">&larr;
+            Back to Dashboard</a>
+        <h2 style="color: var(--primary-color); margin-bottom: 0.5rem;">🏆 Community Hub</h2>
+        <p style="color: #666;">Share your certificates, academic results, and projects!</p>
+    </div>
+
+    <!-- Innovative Search Bar -->
+    <div class="search-container">
+        <form method="GET" class="search-form">
+            <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" name="q" value="{{ query|default:'' }}"
+                    placeholder="Search people, posts, certificates..." class="search-input" autocomplete="off">
+                <button type="submit" class="search-btn">Search</button>
+            </div>
+        </form>
+        {% if query %}
+        <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 0.85rem; color: #888;">Results for "<strong>{{ query }}</strong>"</span>
+            <a href="{% url 'community_hub' %}"
+                style="font-size: 0.8rem; color: var(--secondary-color); text-decoration: none;">✕ Clear</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Search Results: People Found -->
+    {% if search_users %}
+    <div class="people-results">
+        <h4 style="margin: 0 0 1rem; color: #333; display: flex; align-items: center; gap: 8px;">
+            👥 People Found <span
+                style="background: var(--secondary-color); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 20px;">{{
+                search_users|length }}</span>
+        </h4>
+        <div class="people-grid">
+            {% for person in search_users %}
+            <div class="person-card">
+                <div class="person-avatar">
+                    {% if person.profile.profile_picture %}
+                    <img src="{{ person.profile.profile_picture.url }}" alt="{{ person.username }}"
+                        style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                    {% else %}
+                    {{ person.username|first|upper }}
+                    {% endif %}
+                </div>
+                <div class="person-info">
+                    <a href="{% url 'view_profile' person.username %}" class="person-name"
+                        style="text-decoration: none; color: #222;">{{ person.first_name|default:person.username }}</a>
+                    <span class="person-type">{{ person.profile.user_type|title }}</span>
+                </div>
+                <div class="person-actions">
+                    <button class="connect-btn" onclick="connectUser(this, '{{ person.username }}')">
+                        <span>🤝</span> Connect
+                    </button>
+                    <a href="{% url 'view_profile' person.username %}" class="view-profile-btn">
+                        <span>👤</span> View Profile
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Post Creation Form -->
+    <div
+        style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 2rem;">
+        <h4 style="margin-top: 0; margin-bottom: 1rem;">Create a Post</h4>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group" style="margin-bottom: 1rem;">
+                {{ form.content }}
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div style="flex: 1;">
+                    {{ form.category }}
+                </div>
+                <div style="flex: 1;">
+                    {{ form.image }}
+                </div>
+                <button type="submit" class="btn"
+                    style="background: var(--secondary-color); color: white; padding: 10px 20px;">Post 🚀</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Feed -->
+    <div class="feed">
+        {% for post in posts %}
+        <div class="post-card"
+            style="background: white; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 1.5rem; overflow: hidden;">
+            <!-- Post Header -->
+            <div style="padding: 1rem; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #eee;">
+                {% if post.user.profile.profile_picture %}
+                <img src="{{ post.user.profile.profile_picture.url }}" alt="User"
+                    style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                {% else %}
+                <div
+                    style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                    {{ post.user.username|first|upper }}</div>
+                {% endif %}
+                <div style="flex: 1;">
+                    <a href="{% url 'view_profile' post.user.username %}"
+                        style="text-decoration: none; color: inherit;">
+                        <h4 style="margin: 0; font-size: 1rem;">{{ post.user.first_name|default:post.user.username }}
+                        </h4>
+                    </a>
+                    <span style="font-size: 0.8rem; color: #777;">{{ post.created_at|timesince }} ago • {{
+                        post.get_category_display }}</span>
+                </div>
+            </div>
+
+            <!-- Post Content -->
+            <div style="padding: 1rem;">
+                <p style="margin-top: 0; color: #333; white-space: pre-wrap;">{{ post.content }}</p>
+                {% if post.image %}
+                <div style="margin-top: 1rem; border-radius: 8px; overflow: hidden; border: 1px solid #eee;">
+                    <img src="{{ post.image.url }}" alt="Post Image" style="width: 100%; display: block;">
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Post Actions -->
+            <div
+                style="padding: 0.5rem 1rem; background: #f9f9f9; display: flex; gap: 15px; border-top: 1px solid #eee;">
+                <button class="like-btn" data-post-id="{{ post.id }}"
+                    style="background: none; border: none; cursor: pointer; color: {% if request.user in post.likes.all %}#ef4444{% else %}#666{% endif %}; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; transition: transform 0.2s;">
+                    <span class="heart-icon" style="font-size: 1.1rem;">❤️</span>
+                    <span class="like-count">{{ post.likes.count }}</span> Likes
+                </button>
+            </div>
+        </div>
+        {% empty %}
+        <div style="text-align: center; color: #777; padding: 2rem;">
+            No posts yet. Be the first to share something!
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    // Like functionality
+    document.querySelectorAll('.like-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const postId = this.dataset.postId;
+            fetch(`/community/like/${postId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    this.querySelector('.like-count').textContent = data.count;
+                    this.style.color = data.liked ? '#ef4444' : '#666';
+                    this.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 200);
+                });
+        });
+    });
+
+    // Connect functionality
+    function connectUser(btn, username) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳</span> Connecting...';
+
+        fetch(`/profile/${username}/connect/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                btn.innerHTML = '<span>✅</span> Connected';
+                btn.classList.add('connected');
+                btn.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    btn.style.transform = 'scale(1)';
+                }, 200);
+            })
+            .catch(err => {
+                btn.innerHTML = '<span>✅</span> Connected';
+                btn.classList.add('connected');
+                btn.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    btn.style.transform = 'scale(1)';
+                }, 200);
+            });
+    }
+</script>
+
+<style>
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 1rem;
+    }
+
+    /* ====== SEARCH BAR ====== */
+    .search-container {
+        margin-bottom: 2rem;
+    }
+
+    .search-wrapper {
+        display: flex;
+        align-items: center;
+        background: white;
+        border-radius: 50px;
+        padding: 6px 6px 6px 20px;
+        box-shadow: 0 4px 20px rgba(106, 17, 203, 0.1);
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+    .search-wrapper:focus-within {
+        border-color: var(--secondary-color);
+        box-shadow: 0 4px 25px rgba(37, 117, 252, 0.2);
+    }
+
+    .search-icon {
+        font-size: 1.2rem;
+        margin-right: 10px;
+    }
+
+    .search-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 1rem;
+        font-family: inherit;
+        color: #333;
+        background: transparent;
+        padding: 10px 0;
+    }
+
+    .search-input::placeholder {
+        color: #aaa;
+    }
+
+    .search-btn {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .search-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+    }
+
+    /* ====== PEOPLE RESULTS ====== */
+    .people-results {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        border: 1px solid #eef0f5;
+    }
+
+    .people-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .person-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 1.2rem;
+        background: #f8f9fe;
+        border-radius: 14px;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+    }
+
+    .person-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(106, 17, 203, 0.1);
+        border-color: rgba(106, 17, 203, 0.15);
+    }
+
+    .person-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 0.6rem;
+        box-shadow: 0 4px 12px rgba(106, 17, 203, 0.2);
+    }
+
+    .person-name {
+        margin: 0;
+        font-size: 0.95rem;
+        color: #222;
+    }
+
+    .person-type {
+        font-size: 0.75rem;
+        color: #888;
+        display: block;
+        margin-bottom: 0.8rem;
+    }
+
+    /* ====== PERSON ACTION BUTTONS ====== */
+    .person-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 0.5rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .view-profile-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 7px 14px;
+        background: white;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        text-decoration: none;
+    }
+
+    .view-profile-btn:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: scale(1.08);
+        box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+    }
+
+    /* ====== CONNECT BUTTONS ====== */
+    .connect-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 7px 18px;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+
+    .connect-btn:hover {
+        transform: scale(1.08);
+        box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+    }
+
+    .connect-btn.connected {
+        background: linear-gradient(135deg, #00b894, #55efc4);
+    }
+
+    .connect-btn-sm {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 5px 14px;
+        background: white;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        white-space: nowrap;
+    }
+
+    .connect-btn-sm:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: scale(1.05);
+    }
+
+    .connect-btn-sm.connected {
+        background: #00b894;
+        color: white;
+        border-color: #00b894;
+    }
+</style>
+{% endblock %}

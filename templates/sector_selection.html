@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .sector-header {
+        background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+        color: white;
+        padding: 4rem 2rem;
+        text-align: center;
+        margin-bottom: -3rem;
+        padding-bottom: 6rem;
+    }
+
+    .sector-choice-container {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        flex-wrap: wrap;
+    }
+
+    .sector-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 3rem;
+        width: 350px;
+        text-align: center;
+        transition: transform 0.3s;
+        text-decoration: none;
+        color: #333;
+    }
+
+    .sector-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .sector-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .sector-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .sector-btn {
+        display: inline-block;
+        margin-top: 1.5rem;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        background: #eee;
+        color: #333;
+        font-weight: 600;
+        transition: background 0.2s;
+    }
+
+    .sector-card:hover .sector-btn {
+        background: var(--secondary-color);
+        color: white;
+    }
+</style>
+
+<div class="sector-header">
+    <h1 style="font-size: 3rem; text-transform: capitalize;">Choose {{ type }} Sector</h1>
+    <p style="font-size: 1.2rem; opacity: 0.9;">Select the type of organization you want to work with</p>
+</div>
+
+<div class="container">
+    <div class="sector-choice-container">
+        <!-- Government -->
+        <a href="{% url 'opportunity_list' type 'govt' %}" class="sector-card">
+            <span class="sector-icon">🏛️</span>
+            <div class="sector-title">Government</div>
+            <p>Stable careers, public service, and nation building opportunities.</p>
+            <span class="sector-btn">View Govt {{ title }}</span>
+        </a>
+
+        <!-- Private -->
+        <a href="{% url 'opportunity_list' type 'private' %}" class="sector-card">
+            <span class="sector-icon">🏢</span>
+            <div class="sector-title">Private</div>
+            <p>Fast-paced environments, startups, MNCs, and corporate roles.</p>
+            <span class="sector-btn">View Private {{ title }}</span>
+        </a>
+    </div>
+
+    <div style="text-align: center; margin-top: 3rem;">
+        <a href="{% url 'ecosystem' %}" style="color: #666; text-decoration: none;">&larr; Back to Ecosystem Hub</a>
+    </div>
+</div>
+{% endblock %}

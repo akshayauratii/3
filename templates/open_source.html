@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .os-header {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        padding: 5rem 2rem;
+        text-align: center;
+        border-radius: 0 0 50% 50% / 4rem;
+        margin-bottom: 4rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 2rem;
+        text-align: center;
+        position: relative;
+        display: inline-block;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .section-title::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 4px;
+        background: var(--secondary-color);
+        margin: 0.5rem auto 0;
+        border-radius: 2px;
+    }
+
+    .os-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+
+    .os-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s, box-shadow 0.3s;
+        border: 1px solid #eee;
+    }
+
+    .os-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Collaborations */
+    .collab-card {
+        border-left: 5px solid #ff6b6b;
+    }
+
+    .collab-status {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    /* Projects */
+    .project-card {
+        border-left: 5px solid #48dbfb;
+    }
+
+    .tech-stack {
+        display: flex;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    .tech-tag {
+        background: #f0f2f5;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        color: #555;
+    }
+
+    /* Startups */
+    .startup-card {
+        border-left: 5px solid #1dd1a1;
+    }
+
+    .back-btn {
+        display: inline-block;
+        margin-bottom: 2rem;
+        color: #666;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .back-btn:hover {
+        color: var(--primary-color);
+    }
+</style>
+
+<div class="container">
+    <a href="{% url 'dashboard' %}" class="back-btn">&larr; Back to Dashboard</a>
+</div>
+
+<div class="os-header">
+    <h1 style="font-size: 3.5rem; margin-bottom: 1rem;">Open Source Innovation Hub</h1>
+    <p style="font-size: 1.2rem; opacity: 0.9; max-width: 700px; margin: 0 auto;">
+        Bridge the gap between Alumni, Students, and Companies. Collaborate on real-world projects, foster innovation,
+        and build the future together.
+    </p>
+</div>
+
+<div class="container">
+
+    <!-- Section 1: Collaborations -->
+    <h2 class="section-title">Global Collaborations</h2>
+    <div class="os-grid">
+        {% for item in data.collaborations %}
+        <div class="os-card collab-card">
+            <span class="collab-status"
+                style="background: {% if item.status == 'Active' %}#e1f5fe; color: #0288d1;{% elif item.status == 'Hiring' %}#e8f5e9; color: #2e7d32;{% else %}#fff3e0; color: #ef6c00;{% endif %}">
+                {{ item.status }}
+            </span>
+            <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">{{ item.title }}</h3>
+            <p style="color: #666; margin-bottom: 1rem;"><strong>Type:</strong> {{ item.type }}</p>
+            <p style="color: #555;">{{ item.participants }}</p>
+            <a href="{% url 'open_source_detail' item.slug %}" class="btn"
+                style="margin-top: 1.5rem; width: 100%; background: #ff6b6b; border: none; text-align: center; display: block; text-decoration: none;">View
+                Details</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Section 2: Project Ideas -->
+    <h2 class="section-title">Project Ideas & Contributors</h2>
+    <div class="os-grid">
+        {% for item in data.projects %}
+        <div class="os-card project-card">
+            <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">{{ item.title }}</h3>
+            <div class="tech-stack">
+                {% for tech in item.tech.split|slice:":2" %}
+                <!-- Simple split isn't perfect for "React/Node" but good enough for mockup -->
+                <span class="tech-tag">{{ item.tech }}</span>
+                {% endfor %}
+            </div>
+            <p style="color: #666; margin-bottom: 1rem;">Looking for: <strong>{{ item.needed }}</strong></p>
+            <a href="{% url 'open_source_detail' item.slug %}" class="btn"
+                style="width: 100%; background: #48dbfb; color: #000; border: none; text-align: center; display: block; text-decoration: none;">View
+                Details</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Section 3: Startups -->
+    <h2 class="section-title">Alumni Startups</h2>
+    <div class="os-grid">
+        {% for item in data.startups %}
+        <div class="os-card startup-card">
+            <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">{{ item.name }}</h3>
+            <p style="color: #888; margin-bottom: 1rem; font-size: 0.9rem;">{{ item.field }}</p>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div
+                    style="background: #eee; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    👤</div>
+                <div>
+                    <div style="font-weight: 600; font-size: 0.9rem;">{{ item.founder }}</div>
+                    <div style="font-size: 0.8rem; color: #666;">Founder</div>
+                </div>
+            </div>
+            <div style="background: #f9f9f9; padding: 1rem; border-radius: 8px;">
+                <p style="margin: 0; font-size: 0.9rem;"><strong>Hiring:</strong> {{ item.looking_for }}</p>
+            </div>
+            <a href="{% url 'open_source_detail' item.slug %}" class="btn"
+                style="margin-top: 1.5rem; width: 100%; background: #1dd1a1; border: none; text-align: center; display: block; text-decoration: none;">View
+                Details</a>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

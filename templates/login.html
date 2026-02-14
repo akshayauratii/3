@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2 class="section-title">Welcome Back</h2>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div style="color: red; font-size: 0.8rem; margin-top: 5px;">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn" style="width: 100%;">Login</button>
+        </form>
+        <p style="text-align: center; margin-top: 1rem;">
+            New here? <a href="{% url 'register' %}" style="color: var(--secondary-color);">Create an account</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

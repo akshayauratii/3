@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 900px; margin: 2rem auto; padding: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h2 style="color: var(--primary-color); margin: 0; display: flex; align-items: center; gap: 10px;">
+                ☕ Chai Time Sessions
+            </h2>
+            <p style="color: #666; margin-top: 0.5rem;">Join casual networking sessions and learn from peers.</p>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <form method="GET" style="display: flex; gap: 5px; margin-right: 10px;">
+                <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search topics..."
+                    style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; outline: none;">
+                <button type="submit" class="btn" style="padding: 8px 15px; font-size: 0.9rem;">Search</button>
+            </form>
+            {% if user.profile.user_type == 'alumni' or user.is_superuser %}
+            <a href="{% url 'create_tea_session' %}" class="btn"
+                style="background: var(--secondary-color); color: white;">+ Host New</a>
+            {% endif %}
+            <a href="{% url 'dashboard' %}" class="btn" style="background: #f0f2f5; color: #333;">Back</a>
+        </div>
+    </div>
+
+    <h3 style="margin-bottom: 1.5rem; color: #333;">📅 Upcoming Sessions</h3>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="sessions-grid"
+        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+        {% for session in sessions %}
+        <div class="session-card">
+            <div class="session-header {% if session.status == 'live' %}live{% else %}scheduled{% endif %}">
+                <span class="status-badge {% if session.status == 'live' %}live{% else %}scheduled{% endif %}">
+                    {% if session.status == 'live' %}
+                    🔴 Live Now
+                    {% else %}
+                    🗓️ {{ session.get_status_display }}
+                    {% endif %}
+                </span>
+            </div>
+
+            <div style="padding: 1.5rem;">
+                <h3 style="margin: 0 0 0.5rem; font-size: 1.2rem;">{{ session.topic }}</h3>
+                <p style="margin: 0; color: #666; display: flex; align-items: center; gap: 5px;">
+                    👤 Host: <strong>{{ session.host.username }}</strong>
+                </p>
+                <p style="font-size: 0.9rem; color: #777; margin-top: 0.5rem;">{{ session.description|truncatewords:15
+                    }}</p>
+
+                <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="font-size: 0.9rem; color: #888;">
+                        👥 {{ session.participants.count }} joined
+                    </div>
+                </div>
+
+                <a href="{% url 'join_meeting' session.id %}"
+                    class="btn join-session-btn {% if session.status == 'live' %}live{% else %}scheduled{% endif %}">
+                    {% if session.status == 'live' %}
+                    Join Session
+                    {% else %}
+                    Starts {{ session.date_time }}
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-sessions">
+            No sessions scheduled. Be the first to host one!
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .no-sessions {
+        grid-column: 1 / -1;
+        text-align: center;
+        color: #777;
+        padding: 2rem;
+    }
+
+    .session-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s;
+    }
+
+    .session-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .session-header {
+        padding: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .session-header.live {
+        background-color: #e8f5e9;
+    }
+
+    .session-header.scheduled {
+        background-color: #fff3e0;
+    }
+
+    .status-badge {
+        font-size: 0.8rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-badge.live {
+        color: #2e7d32;
+    }
+
+    .status-badge.scheduled {
+        color: #ef6c00;
+    }
+
+    .join-session-btn {
+        display: block;
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+
+    .join-session-btn.live {
+        background: var(--primary-color);
+        color: white;
+        pointer-events: auto;
+    }
+
+    .join-session-btn.scheduled {
+        background: #e0e0e0;
+        color: #777;
+        pointer-events: none;
+    }
+</style>
+{% endblock %}

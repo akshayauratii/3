@@ -1,0 +1,98 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block admin_content %}
+<div class="dashboard-welcome">
+    <h2 style="font-weight: 300;">Welcome back, <span style="font-weight: 600; color: var(--primary);">{% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user.username }}{% endif %}</span>! 👋</h2>
+    <p style="color: #777;">Here is what's happening in the alumni network today.</p>
+</div>
+
+<div class="stats-section">
+    <h3 style="margin-bottom: 20px; color: var(--dark); border-left: 5px solid var(--primary); padding-left: 10px;">Key
+        Ecosystem Metrics</h3>
+    <div class="stats-grid">
+        <a href="{% url 'admin_students_list' %}" style="text-decoration: none; color: inherit;">
+            <div class="stat-card" style="border-bottom: 4px solid #4a90e2; transition: transform 0.2s;">
+                <div class="stat-icon" style="font-size: 2.5rem; color: #4a90e2; margin-bottom: 10px;">
+                    <i class="fa-solid fa-user-graduate"></i>
+                </div>
+                <div class="stat-value">{{ stats.total_students }}</div>
+                <div class="stat-label">Total Students</div>
+            </div>
+        </a>
+        <a href="{% url 'admin_alumni_list' %}" style="text-decoration: none; color: inherit;">
+            <div class="stat-card" style="border-bottom: 4px solid #a18cd1; transition: transform 0.2s;">
+                <div class="stat-icon" style="font-size: 2.5rem; color: #a18cd1; margin-bottom: 10px;">
+                    <i class="fa-solid fa-user-tie"></i>
+                </div>
+                <div class="stat-value">{{ stats.total_alumni }}</div>
+                <div class="stat-label">Total Alumni</div>
+            </div>
+        </a>
+        <a href="{% url 'admin_mentors_list' %}" style="text-decoration: none; color: inherit;">
+            <div class="stat-card" style="border-bottom: 4px solid #00cec9; transition: transform 0.2s;">
+                <div class="stat-icon" style="font-size: 2.5rem; color: #00cec9; margin-bottom: 10px;">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
+                <div class="stat-value">{{ stats.total_mentors }}</div>
+                <div class="stat-label">Total Mentors</div>
+            </div>
+        </a>
+        <a href="{% url 'admin_active_users_list' %}" style="text-decoration: none; color: inherit;">
+            <div class="stat-card" style="border-bottom: 4px solid #fab1a0; transition: transform 0.2s;">
+                <div class="stat-icon" style="font-size: 2.5rem; color: #fab1a0; margin-bottom: 10px;">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="stat-value">{{ stats.total_active_users }}</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="stats-section" style="margin-top: 30px;">
+    <h3 style="margin-bottom: 20px; color: var(--dark); font-size: 1.1rem; opacity: 0.8;">Operational Stats</h3>
+    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 300px));">
+        <a href="{% url 'admin_quiz_stats' %}" style="text-decoration: none; color: inherit;">
+            <div class="stat-card" style="transition: transform 0.2s;">
+                <div class="stat-value" style="font-size: 1.5rem;">{{ stats.quiz_participants }}</div>
+                <div class="stat-label">Quiz Participants</div>
+            </div>
+        </a>
+        <a href="{% url 'admin_mentor_requests' %}" style="text-decoration: none; color: inherit;">
+            <div class="stat-card" style="transition: transform 0.2s;">
+                <div class="stat-value" style="font-size: 1.5rem;">{{ stats.mentor_requests }}</div>
+                <div class="stat-label">Mentor Requests</div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="grid-columns" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+    <div class="card">
+        <h3>Platform Activity Overview</h3>
+        <p style="color: #999; font-size: 0.9rem;">Real-time insights into system health and user engagement.</p>
+        <div
+            style="height: 200px; background: #f8f9fa; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #ccc;">
+            [ Activity Chart Placeholder ]
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>System Overview</h3>
+        <ul style="list-style: none; padding: 0; margin-top: 1rem;">
+            <li style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+                <span>Server Status</span>
+                <span class="badge" style="background: #e8f5e9; color: #2e7d32;">Online</span>
+            </li>
+            <li style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+                <span>Database</span>
+                <span style="font-size: 0.85rem; color: #777;">PostgreSQL / SQLite</span>
+            </li>
+            <li style="padding: 10px 0; display: flex; justify-content: space-between;">
+                <span>Last Updated</span>
+                <span style="font-size: 0.85rem; color: #777;">Just Now</span>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

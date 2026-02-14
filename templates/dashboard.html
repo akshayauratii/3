@@ -1,0 +1,354 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .dashboard-container {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 2rem;
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-container {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Left Sidebar */
+    .sidebar {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        height: fit-content;
+    }
+
+    .profile-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .profile-pic {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: #eee;
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #888;
+        object-fit: cover;
+    }
+
+    .sidebar-menu {
+        list-style: none;
+        padding: 0;
+    }
+
+    .sidebar-menu li {
+        margin-bottom: 1rem;
+    }
+
+    .sidebar-menu a {
+        text-decoration: none;
+        color: #555;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 6px;
+        transition: 0.2s;
+    }
+
+    .sidebar-menu a:hover {
+        background: #f0f2f5;
+        color: var(--primary-color);
+    }
+
+    .status-card {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+    }
+
+    /* Right Content */
+    .main-feed {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border-left: 5px solid var(--secondary-color);
+        transition: transform 0.2s;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        color: #333;
+        margin: 0;
+    }
+
+    .highlight-icon {
+        font-size: 1.5rem;
+        background: #eef2f5;
+        padding: 8px;
+        border-radius: 50%;
+    }
+
+    /* Opportunity List */
+    .opp-item {
+        border-bottom: 1px solid #eee;
+        padding: 1rem 0;
+    }
+
+    .opp-item:last-child {
+        border-bottom: none;
+    }
+
+    .opp-title {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .opp-meta {
+        font-size: 0.9rem;
+        color: #777;
+    }
+</style>
+
+<div class="dashboard-container">
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+        <div class="profile-section">
+            <div class="profile-pic">
+                {% if user.profile.profile_picture %}
+                <img src="{{ user.profile.profile_picture.url }}" alt="Profile"
+                    style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                👤
+                {% endif %}
+            </div>
+            <h3>{{ user.first_name|default:user.username }} <a href="{% url 'edit_profile' %}"
+                    style="font-size: 0.9rem; text-decoration: none; color: var(--primary-color);"
+                    title="Edit Profile">✏️</a></h3>
+            <p style="color: #777; font-size: 0.9rem;">{{ profile.get_user_type_display }}</p>
+        </div>
+
+        <!-- Notifications -->
+        <div class="sidebar-section">
+            <h4>🔔 Notifications</h4>
+            {% if notifications %}
+            <div
+                style="background: #e8f5e9; color: #2e7d32; padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; margin-bottom: 0.5rem;">
+                {{ notifications.count }} New
+            </div>
+            {% endif %}
+            <a href="{% url 'notifications' %}" class="btn"
+                style="width: 100%; background: white; border: 1px solid #ddd; color: #333; margin-top: 0.5rem; text-align: center;">View
+                All Notifications</a>
+        </div>
+
+        <!-- Connections -->
+        <div class="sidebar-section" style="margin-top: 1.5rem;">
+            <h4>🔗 Connections</h4>
+            <a href="{% url 'connections' %}" class="btn"
+                style="width: 100%; background: white; border: 1px solid #ddd; color: #333; text-align: center;">My
+                Network & Feed</a>
+        </div>
+
+        <!-- Social Feed -->
+        <div class="sidebar-section" style="margin-top: 1.5rem;">
+            <h4>👥 Community</h4>
+            <a href="{% url 'social_feed' %}"
+                style="display: block; width: 100%; padding: 0.8rem; border: 1px solid #ddd; background: white; text-align: center; border-radius: 8px; text-decoration: none; color: #333; font-weight: 500; transition: 0.2s;">
+                Social Feed
+            </a>
+        </div>
+
+        <!-- Skills -->
+        <div class="sidebar-section" style="margin-top: 1.5rem;">
+            <h4>🛠 Skills</h4>
+            <a href="{% url 'skills' %}" class="btn"
+                style="width: 100%; background: white; border: 1px solid #ddd; color: #333; text-align: center;">Manage
+                Skills</a>
+        </div>
+
+        <!-- Applied Internships -->
+        <div class="sidebar-section" style="margin-top: 1.5rem;">
+            <h4>📌 Jobs & Internships</h4>
+
+            <a href="{% url 'applied_jobs' %}" class="btn"
+                style="width: 100%; background: white; border: 1px solid #ddd; color: #333; text-align: center;">View
+                Applications</a>
+        </div>
+
+        <!-- Upcoming Interviews -->
+        <div class="sidebar-section" style="margin-top: 1.5rem;">
+            <h4>🗓️ Upcoming Interviews</h4>
+            <a href="{% url 'upcoming_events' %}" class="btn"
+                style="width: 100%; background: white; border: 1px solid #ddd; color: #333; text-align: center;">View
+                Schedule</a>
+        </div>
+
+        <div class="status-card">
+            <strong>Assessment Marks:</strong> {{ profile.assessment_marks }}/30
+            {% if profile.assessment_marks >= 25 %}
+            <span
+                style="background: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; margin-left: 5px;">VERIFIED
+                ✅</span>
+            {% endif %}
+            <div style="background: #e9ecef; height: 8px; border-radius: 4px; margin-top: 5px; overflow: hidden;">
+                <div
+                    style="width: {{ profile.assessment_marks|default:0 }}%; background: var(--secondary-color); height: 100%;">
+                </div>
+            </div>
+            <p style="font-size: 0.8rem; margin-top: 5px; color: #666;">Cut-off: 25/30</p>
+        </div>
+
+        <!-- Admin Portal (Direct Link Access) -->
+        <!-- <div class="sidebar-section" style="margin-top: 1.5rem;">
+            <h4 style="color: #4a90e2;">🛡 Portal</h4>
+            <a href="{% url 'admin_dashboard' %}" class="btn"
+                style="width: 100%; background: #4a90e2; color: white; text-align: center; border: none; box-shadow: 0 4px 10px rgba(74, 144, 226, 0.2);">
+                Admin Portal
+            </a>
+        </div> -->
+
+        <div style="margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1rem;">
+            <a href="{% url 'feedback' %}"
+                style="display: block; margin-bottom: 0.5rem; text-decoration: none; color: #555;">💬 Give Feedback</a>
+            <a href="{% url 'home' %}"
+                style="display: block; margin-bottom: 0.5rem; text-decoration: none; color: #555;">⬅ Go to Main Page</a>
+            <a href="{% url 'logout' %}"
+                style="display: block; text-decoration: none; color: #dc3545; font-weight: 600;">🚪 Logout</a>
+        </div>
+    </aside>
+
+    <!-- Right Content -->
+    <main class="main-feed">
+
+        <!-- Networking Ecosystem Banner -->
+        <div
+            style="grid-column: 1 / -1; background: linear-gradient(135deg, #1a237e 0%, #0288d1 100%); color: white; padding: 3rem; border-radius: 20px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; min-height: 300px;">
+            <div style="position: absolute; top: 1rem; left: 2rem;">
+                <span
+                    style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px;">
+                    🚀 Launch Your Career
+                </span>
+            </div>
+
+            <h1 style="font-size: 3rem; margin-bottom: 0.5rem; line-height: 1.2;">Networking<br>Ecosystem</h1>
+            <p style="font-size: 1.1rem; opacity: 0.9; max-width: 500px; margin-bottom: 2rem;">Access curated Jobs,
+                Internships, and Mentorship opportunities.</p>
+
+            <a href="{% url 'ecosystem' %}"
+                style="display: inline-block; background: white; color: #1a237e; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; width: fit-content;">
+                Explore Brochure &rarr;
+            </a>
+
+            <!-- Decorative Circle -->
+            <div
+                style="position: absolute; right: -50px; top: 50%; transform: translateY(-50%); width: 300px; height: 300px; border: 2px solid rgba(255,255,255,0.1); border-radius: 50%;">
+            </div>
+            <div
+                style="position: absolute; right: -50px; top: 50%; transform: translateY(-50%); width: 280px; height: 280px; background: rgba(255,255,255,0.05); border-radius: 50%;">
+            </div>
+        </div>
+
+
+        <!-- Community Hub Card -->
+        <div class="feature-card"
+            style="border-left: none; background: #ff7043; color: white; display: flex; align-items: center; gap: 1rem;">
+            <div
+                style="background: rgba(255,255,255,0.2); border-radius: 50%; width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem;">
+                🏆
+            </div>
+            <div>
+                <h3 style="margin: 0; font-size: 1.2rem;">Community Hub</h3>
+                <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">Share certificates & achievements</p>
+                <a href="{% url 'community_hub' %}"
+                    style="color: white; font-size: 0.9rem; text-decoration: underline; opacity: 1; font-weight: bold; margin-top: 5px; display: inline-block;">Explore
+                    Hub &rarr;</a>
+            </div>
+        </div>
+
+
+
+        <!-- chai Time Sessions Card -->
+        <div class="feature-card" style="border-left-color: #ff9a9e;">
+            <div class="card-header">
+                <h2 class="card-title">☕ Chai Time Sessions</h2>
+                <span class="highlight-icon">📹</span>
+            </div>
+            <p>Join live interactive sessions, host your own, or watch past recordings.</p>
+            <div style="display: flex; gap: 10px;">
+                <a href="{% url 'tea_time' %}" class="btn"
+                    style="flex: 1; text-align: center; background: #ff9a9e; color: white;">Join Session</a>
+                <a href="{% url 'create_tea_session' %}" class="btn"
+                    style="flex: 1; text-align: center; background: #f0f2f5; color: #333;">Host New</a>
+            </div>
+        </div>
+
+        <!-- Existing Features -->
+        <!-- Open Source Innovation -->
+        <div class="feature-card" style="border-left-color: #2575fc;">
+            <div class="card-header">
+                <h2 class="card-title">🚀 Open Source Innovation</h2>
+                <span class="highlight-icon">🌐</span>
+            </div>
+            <p>Collaborate on real-world projects, join alumni startups, and impact the future.</p>
+            <a href="{% url 'open_source' %}" class="btn"
+                style="width: 100%; margin-top: 1rem; text-align: center; background: #2575fc; display: block; text-decoration: none;">Explore
+                Brochure</a>
+        </div>
+
+        <!-- Mentoring -->
+        <div class="feature-card" style="border-left-color: #a18cd1;">
+            <div class="card-header">
+                <h2 class="card-title">👨‍🏫 Mentoring</h2>
+                <span class="highlight-icon">💬</span>
+            </div>
+            <p>Get your doubts clarified by industry experts.</p>
+            <a href="{% url 'mentoring_brochure' %}" class="btn"
+                style="width: 100%; margin-top: 1rem; background: #a18cd1; display: block; text-align: center; text-decoration: none;">Find
+                a Mentor</a>
+        </div>
+
+        <!-- Quiz -->
+        <div class="feature-card" style="border-left-color: #84fab0;">
+            <div class="card-header">
+                <h2 class="card-title">📝 Eligibility Quiz</h2>
+                <span class="highlight-icon">✅</span>
+            </div>
+            <p>Take the test to unlock premium job opportunities.</p>
+            <a href="{% url 'quiz' %}" class="btn"
+                style="width: 100%; margin-top: 1rem; background: #84fab0; color: #333; display: block; text-align: center; text-decoration: none;">Start
+                Quiz</a>
+        </div>
+    </main>
+</div>
+{% endblock %}

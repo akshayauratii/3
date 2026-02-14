@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 900px; margin: 2rem auto; padding: 2rem;">
+    <h2>chai Time Sessions</h2>
+
+    <div class="sessions-grid">
+        {% for session in sessions %}
+        <div class="session-card">
+            <div class="session-header">
+                <span class="status-badge">
+                    {% if session.status == 'live' %}
+                    Live Now
+                    {% else %}
+                    {{ session.get_status_display }}
+                    {% endif %}
+                </span>
+            </div>
+
+            <div style="padding: 1.5rem;">
+                <h3>{{ session.topic }}</h3>
+                <p>Host: {{ session.host.username }}</p>
+                <div style="margin-top: 1.5rem;">
+                    joined
+                </div>
+
+                <a href="{% url 'join_meeting' session.id %}" class="btn">
+                    {% if session.status == 'live' %}
+                    Join Session
+                    {% else %}
+                    Starts {{ session.date_time }}
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-sessions">
+            No sessions scheduled.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block admin_content %}
+<div class="card">
+    <h2>System Audit Logs</h2>
+    <p style="color: #777;">Track all administrative actions performed within the portal.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Admin</th>
+                <th>Action Performed</th>
+                <th>Target</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td><strong>{{ log.admin.username }}</strong></td>
+                <td>{{ log.action }}</td>
+                <td><span style="font-family: monospace; color: #777;">{{ log.target }}</span></td>
+                <td style="font-size: 0.85rem; color: #999;">{{ log.timestamp|date:"M d, Y H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center; color: #ccc; padding: 3rem;">No audit logs recorded yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

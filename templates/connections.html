@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 900px; margin: 2rem auto; padding: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 style="color: var(--primary-color); margin: 0;">🔗 My Connections</h2>
+        <a href="{% url 'dashboard' %}" class="btn" style="background: #f0f2f5; color: #333;">Back to Dashboard</a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+        <!-- Connections List -->
+        <div>
+            <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">Your Network</h3>
+            <div style="background: white; border-radius: 12px; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                {% for conn in connections %}
+                <div
+                    style="padding: 10px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 10px;">
+                    <div
+                        style="width: 40px; height: 40px; background: #e0e0e0; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        {{ conn.connected_user.username|slice:":1"|upper }}
+                    </div>
+                    <div>
+                        <strong>{{ conn.connected_user.username }}</strong>
+                        <p style="margin: 0; font-size: 0.8rem; color: #666;">Connected {{ conn.created_at|date:"M Y" }}
+                        </p>
+                    </div>
+                </div>
+                {% empty %}
+                <p style="color: #777; text-align: center;">No connections yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Connection Activity Feed -->
+        <div>
+            <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">Network Activity</h3>
+            {% for post in posts %}
+            <div
+                style="background: white; padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
+                    <div
+                        style="width: 40px; height: 40px; background: var(--secondary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                        {{ post.user|slice:":1" }}
+                    </div>
+                    <div>
+                        <strong>{{ post.user }}</strong>
+                        <span style="font-size: 0.8rem; color: #888; display: block;">{{ post.time }}</span>
+                    </div>
+                </div>
+                <p style="color: #333; line-height: 1.5;">{{ post.content }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

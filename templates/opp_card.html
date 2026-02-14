@@ -1,0 +1,12 @@
+<div class="opp-item">
+    <div class="opp-title">{{ opp.title }}</div>
+    <div class="opp-meta">{{ opp.company }} • {{ opp.location }}</div>
+    <div style="margin-top: 0.5rem;">
+        {% if profile.assessment_marks >= opp.min_assessment_score %}
+        <span style="color: green; font-size: 0.8rem;">✅ Eligible</span>
+        <button class="btn" style="padding: 0.3rem 0.8rem; font-size: 0.8rem; float: right;">Apply</button>
+        {% else %}
+        <span style="color: red; font-size: 0.8rem;">❌ Min Score: {{ opp.min_assessment_score }}</span>
+        {% endif %}
+    </div>
+</div>

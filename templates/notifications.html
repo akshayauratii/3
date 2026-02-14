@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 2rem auto; padding: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 style="color: var(--primary-color); margin: 0;">🔔 Notifications</h2>
+        <a href="{% url 'dashboard' %}" class="btn" style="background: #f0f2f5; color: #333;">Back to Dashboard</a>
+    </div>
+
+    <div class="notification-list">
+        {% for notif in notifications %}
+        <div
+            style="background: white; padding: 1.5rem; margin-bottom: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid var(--secondary-color);">
+            <p style="margin: 0; font-size: 1.1rem; color: #333;">{{ notif.message }}</p>
+            <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 0.5rem;">{{
+                notif.created_at|timesince }} ago</span>
+        </div>
+        {% empty %}
+        <div style="text-align: center; padding: 3rem; color: #666;">
+            <p>No new notifications.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

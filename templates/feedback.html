@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container"
+    style="max-width: 600px; margin: 2rem auto; padding: 2rem; background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+    <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">We Value Your Feedback</h2>
+    <p style="color: #666; margin-bottom: 2rem;">Help us improve your networking experience.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Your Message</label>
+            <textarea name="feedback" rows="6"
+                style="width: 100%; border: 1px solid #ddd; padding: 10px; border-radius: 8px; font-family: inherit;"
+                placeholder="Tell us what you think..." required></textarea>
+        </div>
+        <button type="submit" class="btn" style="width: 100%;">Submit Feedback</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 1.5rem;">
+        <a href="{% url 'dashboard' %}" style="text-decoration: none; color: #777;">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

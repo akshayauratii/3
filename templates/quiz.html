@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Sticky Timer Bar -->
+<div id="timer-bar"
+    style="position: sticky; top: 0; left: 0; width: 100%; background: white; border-bottom: 2px solid #eee; padding: 10px 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center; gap: 10px;">
+    <span style="font-weight: bold; color: #555;">Time Remaining:</span>
+    <span id="quiz-timer"
+        style="font-family: monospace; font-size: 1.5rem; font-weight: bold; color: var(--primary-color);">15:00</span>
+</div>
+
+<div class="container" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+    <div style="text-align: center; margin-bottom: 3rem;">
+        <h1 style="color: var(--primary-color); margin-bottom: 0.5rem;">Skill Assessment Quiz</h1>
+        <p style="color: #666; font-size: 1.1rem;">Answer 30 questions to unlock premium opportunities. <br>Passing
+            Score: <strong>25/30</strong></p>
+    </div>
+
+    <form id="quiz-form" method="post"
+        style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        {% csrf_token %}
+
+        {% for q in questions %}
+        <div class="question-card" style="margin-bottom: 2rem; border-bottom: 1px solid #eee; padding-bottom: 1.5rem;">
+            <p style="font-weight: 600; font-size: 1.1rem; margin-bottom: 1rem;">
+                <span style="color: var(--secondary-color); margin-right: 0.5rem;">{{ forloop.counter }}.</span>
+                <span class="question-text">{{ q.question }}</span>
+            </p>
+
+            <div style="display: grid; gap: 0.8rem;">
+                {% for option in q.options %}
+                <label
+                    style="display: flex; align-items: center; gap: 0.8rem; cursor: pointer; padding: 0.5rem; border-radius: 6px; transition: background 0.2s;"
+                    class="option-label">
+                    <input type="radio" name="question_{{ q.id }}" value="{{ option }}" required
+                        style="width: auto; margin: 0;">
+                    <span>{{ option }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <button type="submit" class="btn" style="padding: 1rem 3rem; font-size: 1.1rem;">Submit Quiz</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Timer Logic
+    let timeLeft = 15 * 60; // 15 minutes in seconds
+    const timerElement = document.getElementById('quiz-timer');
+    const quizForm = document.getElementById('quiz-form');
+    let isSubmitting = false;
+
+    // Lockdown Logic
+    window.addEventListener('beforeunload', (e) => {
+        if (!isSubmitting) {
+            e.preventDefault();
+            e.returnValue = 'Are you sure you want to leave? Your quiz progress will be lost.';
+        }
+    });
+
+    // Intercept navigation links
+    document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            if (!isSubmitting) {
+                const confirmLeave = confirm("Are you sure you want to leave the quiz? Your progress will be lost.");
+                if (!confirmLeave) {
+                    e.preventDefault();
+                }
+            }
+        });
+    });
+
+    // Set flag on submit
+    quizForm.addEventListener('submit', () => {
+        isSubmitting = true;
+    });
+
+    // Back Button Guard
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        if (!isSubmitting) {
+            history.go(1);
+        }
+    };
+
+    function updateTimer() {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+
+        // Format: MM:SS
+        timerElement.textContent =
+            (minutes < 10 ? '0' : '') + minutes + ':' +
+            (seconds < 10 ? '0' : '') + seconds;
+
+        // Visual warnings
+        if (timeLeft <= 60) {
+            timerElement.style.color = '#ef4444'; // Red
+            if (timeLeft <= 10) {
+                timerElement.style.animation = 'blink 1s infinite';
+            }
+        }
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            isSubmitting = true;
+            alert("Time's up! Your quiz will be submitted automatically.");
+            // Remove 'required' attributes to allow partial submission
+            const inputs = quizForm.querySelectorAll('input[type="radio"]');
+            inputs.forEach(input => input.removeAttribute('required'));
+            quizForm.submit();
+        }
+
+        timeLeft--;
+    }
+
+    const timerInterval = setInterval(updateTimer, 1000);
+</script>
+
+<style>
+    .option-label:hover {
+        background: #f8f9fa;
+    }
+
+    input[type="radio"] {
+        accent-color: var(--primary-color);
+        transform: scale(1.2);
+    }
+
+    @keyframes blink {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+</style>
+{% endblock %}

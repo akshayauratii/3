@@ -1,0 +1,48 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block admin_content %}
+<div class="card">
+    <h2>Mentor Requests</h2>
+    <p style="color: #777;">Review and manage connections between students and mentors.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Mentor</th>
+                <th>Message Snippet</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in mentor_requests %}
+            <tr>
+                <td>{{ req.student.username }}</td>
+                <td>{{ req.mentor.username }}</td>
+                <td style="font-size: 0.85rem; color: #777;">{{ req.message|truncatechars:50 }}</td>
+                <td>
+                    <span class="badge" style="
+                        {% if req.status == 'accepted' %}background: #e8f5e9; color: #2e7d32;
+                        {% elif req.status == 'rejected' %}background: #ffebee; color: #c62828;
+                        {% else %}background: #fff3e0; color: #ef6c00;{% endif %}
+                    ">{{ req.get_status_display }}</span>
+                </td>
+                <td>
+                    <form method="POST" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="req_id" value="{{ req.id }}">
+                        <select name="status" onchange="this.form.submit()"
+                            style="padding: 5px; border-radius: 5px; border: 1px solid #ddd; font-size: 0.8rem;">
+                            <option value="pending" {% if req.status == 'pending' %}selected{% endif %}>Pending Review</option>
+                            <option value="accepted" {% if req.status == 'accepted' %}selected{% endif %}>Accept</option>
+                            <option value="rejected" {% if req.status == 'rejected' %}selected{% endif %}>Reject</option>
+                        </select>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

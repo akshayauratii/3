@@ -1,0 +1,702 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* ====== HERO SECTION ====== */
+    .hero {
+        position: relative;
+        min-height: 650px;
+        background: linear-gradient(135deg, rgba(106, 17, 203, 0.88), rgba(37, 117, 252, 0.85)),
+        url("{% static 'images/graduation_celebration.svg' %}");
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        text-align: center;
+        padding: 2rem;
+        overflow: hidden;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, transparent 60%);
+        animation: heroShimmer 8s ease-in-out infinite;
+    }
+
+    @keyframes heroShimmer {
+
+        0%,
+        100% {
+            transform: translate(0, 0);
+        }
+
+        50% {
+            transform: translate(30px, -20px);
+        }
+    }
+
+    .hero>* {
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero h1 {
+        font-size: 3.8rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        letter-spacing: -1px;
+        animation: fadeSlideUp 0.8s ease-out;
+    }
+
+    .hero p {
+        font-size: 1.4rem;
+        margin-bottom: 1.5rem;
+        max-width: 750px;
+        opacity: 0.95;
+        line-height: 1.6;
+        animation: fadeSlideUp 0.8s ease-out 0.2s both;
+    }
+
+    .hero blockquote {
+        font-size: 1.15rem;
+        color: rgba(255, 255, 255, 0.9);
+        font-style: italic;
+        max-width: 650px;
+        margin: 0 auto 2rem;
+        padding: 1rem 2rem;
+        border-left: 3px solid rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 0 12px 12px 0;
+        backdrop-filter: blur(4px);
+        animation: fadeSlideUp 0.8s ease-out 0.4s both;
+    }
+
+    @keyframes fadeSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(25px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 1.2rem;
+        animation: fadeSlideUp 0.8s ease-out 0.6s both;
+    }
+
+    .hero-buttons .btn {
+        padding: 0.85rem 2.2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: 2px solid transparent;
+    }
+
+    .hero-buttons .btn-primary {
+        background: white;
+        color: var(--primary-color);
+    }
+
+    .hero-buttons .btn-primary:hover {
+        background: transparent;
+        color: white;
+        border-color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .hero-buttons .btn-secondary {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(8px);
+    }
+
+    .hero-buttons .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.28);
+        border-color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    /* ====== STATS BANNER ====== */
+    .stats-banner {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        padding: 2.5rem 2rem;
+        background: white;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
+        margin-top: -3rem;
+        margin-left: 5%;
+        margin-right: 5%;
+        border-radius: 20px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-label {
+        font-size: 0.95rem;
+        color: #777;
+        margin-top: 0.3rem;
+        font-weight: 500;
+    }
+
+    /* ====== SECTION TITLE ====== */
+    .section-title {
+        text-align: center;
+        margin-bottom: 3rem;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        position: relative;
+        letter-spacing: -0.5px;
+    }
+
+    .section-title::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        margin: 0.8rem auto 0;
+        border-radius: 4px;
+    }
+
+    .section-subtitle {
+        text-align: center;
+        color: #777;
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: -1.5rem auto 3rem;
+        line-height: 1.6;
+    }
+
+    /* ====== SUCCESS STORIES ====== */
+    .stories-section {
+        padding: 5rem 0 4rem;
+    }
+
+    .success-stories {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2.5rem;
+    }
+
+    .story-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        position: relative;
+    }
+
+    .story-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(106, 17, 203, 0.15);
+    }
+
+    .story-image {
+        height: 200px;
+        background-color: #ddd;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+
+    .story-image::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: linear-gradient(transparent, white);
+    }
+
+    .story-content {
+        padding: 1.5rem 1.8rem 1.8rem;
+        position: relative;
+    }
+
+    /* Profile Avatar */
+    .story-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+        position: absolute;
+        top: -36px;
+        right: 24px;
+        object-fit: cover;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    .story-title {
+        font-size: 1.3rem;
+        margin-bottom: 0.6rem;
+        color: #222;
+        font-weight: 700;
+    }
+
+    .story-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.8rem;
+        color: #888;
+        font-size: 0.9rem;
+    }
+
+    .story-meta .badge {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 0.2rem 0.7rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .story-excerpt {
+        color: #666;
+        line-height: 1.65;
+        margin-bottom: 1.2rem;
+        font-size: 0.95rem;
+    }
+
+    .story-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: var(--secondary-color);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: gap 0.3s ease, color 0.3s;
+    }
+
+    .story-link:hover {
+        gap: 0.8rem;
+        color: var(--primary-color);
+    }
+
+    /* ====== INNOVATIONS SECTION ====== */
+    .innovations-section {
+        background: linear-gradient(180deg, #f0f4ff, #ffffff);
+        padding: 5rem 0;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2.5rem;
+        text-align: center;
+    }
+
+    .feature-item {
+        padding: 2.5rem 2rem;
+        background: white;
+        border-radius: 20px;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        border: 1px solid #eef0f5;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .feature-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+        transform-origin: left;
+    }
+
+    .feature-item:hover::before {
+        transform: scaleX(1);
+    }
+
+    .feature-item:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(106, 17, 203, 0.12);
+        border-color: transparent;
+    }
+
+    .feature-icon {
+        font-size: 3.2rem;
+        margin-bottom: 1.2rem;
+        display: inline-block;
+        animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-6px);
+        }
+    }
+
+    .feature-item h3 {
+        font-size: 1.25rem;
+        margin-bottom: 0.7rem;
+        color: #222;
+        font-weight: 700;
+    }
+
+    .feature-item p {
+        color: #777;
+        line-height: 1.6;
+        font-size: 0.95rem;
+    }
+
+    /* ====== CTA SECTION ====== */
+    .cta-section {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        padding: 5rem 2rem;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.07);
+    }
+
+    .cta-section::after {
+        content: '';
+        position: absolute;
+        bottom: -60px;
+        left: -60px;
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .cta-section>* {
+        position: relative;
+        z-index: 1;
+    }
+
+    .cta-section h2 {
+        font-size: 2.4rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+        font-size: 1.15rem;
+        opacity: 0.9;
+        max-width: 550px;
+        margin: 0 auto 2rem;
+        line-height: 1.6;
+    }
+
+    .cta-btn {
+        display: inline-block;
+        padding: 1rem 3rem;
+        background: white;
+        color: var(--primary-color);
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .cta-btn:hover {
+        transform: translateY(-4px) scale(1.03);
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+    }
+
+    /* ====== RESPONSIVE ====== */
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2.4rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+        }
+
+        .stats-banner {
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+        }
+
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .cta-section h2 {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="hero">
+    <h1>Connecting Success, Inspiring Futures.</h1>
+    <p>Where Alumni Achievements Meet Student Dreams. Celebrate, Connect, Create Opportunities.</p>
+
+    <blockquote>
+        "The future belongs to those who believe in the beauty of their dreams."
+    </blockquote>
+
+    <div class="hero-buttons">
+        <a href="{% url 'register' %}" class="btn btn-primary">Join Our Community</a>
+        <a href="#stories" class="btn btn-secondary">Explore Stories</a>
+    </div>
+</section>
+
+<!-- Stats Banner -->
+<div class="stats-banner">
+    <div class="stat-item">
+        <div class="stat-number">500+</div>
+        <div class="stat-label">Alumni Connected</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">120+</div>
+        <div class="stat-label">Mentors Active</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">80+</div>
+        <div class="stat-label">Companies Hiring</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">95%</div>
+        <div class="stat-label">Placement Rate</div>
+    </div>
+</div>
+
+<!-- Success Stories -->
+<div class="container stories-section" id="stories">
+    <h2 class="section-title">Recent Success Stories</h2>
+    <p class="section-subtitle">Inspiring journeys from our alumni community that prove dreams are achievable.</p>
+
+    <div class="success-stories">
+        {% for story in success_stories %}
+        <div class="story-card">
+            <div class="story-image">
+                {% if story.image %}
+                <img src="{{ story.image.url }}" alt="{{ story.title }}"
+                    style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                {% elif forloop.counter|divisibleby:3 %}
+                <img src="{% static 'images/profiles/emily.jpg' %}" alt="{{ story.title }}"
+                    style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                {% elif forloop.counter|divisibleby:2 %}
+                <img src="{% static 'images/profiles/david.jpg' %}" alt="{{ story.title }}"
+                    style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                {% else %}
+                <img src="{% static 'images/profiles/sarah.jpg' %}" alt="{{ story.title }}"
+                    style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                {% endif %}
+            </div>
+            <div class="story-content">
+                <div class="story-avatar">
+                    {% if story.alumni.profile_picture %}
+                    <img src="{{ story.alumni.profile_picture.url }}" alt="{{ story.alumni.user.username }}"
+                        style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                    {% elif forloop.counter|divisibleby:3 %}
+                    <img src="{% static 'images/profiles/emily.jpg' %}" alt="{{ story.alumni.user.username }}"
+                        style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                    {% elif forloop.counter|divisibleby:2 %}
+                    <img src="{% static 'images/profiles/david.jpg' %}" alt="{{ story.alumni.user.username }}"
+                        style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                    {% else %}
+                    <img src="{% static 'images/profiles/sarah.jpg' %}" alt="{{ story.alumni.user.username }}"
+                        style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                    {% endif %}
+                </div>
+                <h3 class="story-title">{{ story.title }}</h3>
+                <div class="story-meta">
+                    <span>{{ story.alumni.user.get_full_name|default:story.alumni.user.username }}</span>
+                    <span class="badge">Class of {{ story.graduation_year }}</span>
+                </div>
+                <p class="story-excerpt">{{ story.story|truncatewords:20 }}</p>
+                <a href="#" class="story-link">Read More →</a>
+            </div>
+        </div>
+        {% empty %}
+        <!-- Placeholder Stories with real images -->
+        <div class="story-card">
+            <div class="story-image">
+                <img src="{% static 'images/profiles/sarah.jpg' %}" alt="Sarah Jenkins"
+                    style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+            <div class="story-content">
+                <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem;">
+                    <div
+                        style="width: 48px; height: 48px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid #ff6b6b;">
+                        <img src="{% static 'images/profiles/sarah.jpg' %}" alt="Sarah Jenkins"
+                            style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div>
+                        <h3 class="story-title" style="margin: 0; font-size: 1.15rem;">Sarah Jenkins</h3>
+                        <span style="font-size: 0.8rem; color: #999;">Founder & CEO, TechNova</span>
+                    </div>
+                </div>
+                <span class="badge" style="margin-bottom: 0.8rem; display: inline-block;">Class of 2018</span>
+                <h3 class="story-title">From Campus to CEO</h3>
+                <p class="story-excerpt"
+                    style="font-style: italic; border-left: 3px solid #ff6b6b; padding-left: 1rem;">"The alumni network
+                    gave me the mentors and connections to turn my dorm-room idea into a funded startup."</p>
+                <a href="#" class="story-link">Read Full Story →</a>
+            </div>
+        </div>
+        <div class="story-card">
+            <div class="story-image">
+                <img src="{% static 'images/profiles/david.jpg' %}" alt="David Chen"
+                    style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+            <div class="story-content">
+                <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem;">
+                    <div
+                        style="width: 48px; height: 48px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid #6c5ce7;">
+                        <img src="{% static 'images/profiles/david.jpg' %}" alt="David Chen"
+                            style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div>
+                        <h3 class="story-title" style="margin: 0; font-size: 1.15rem;">David Chen</h3>
+                        <span style="font-size: 0.8rem; color: #999;">Lead Engineer, GreenTech Global</span>
+                    </div>
+                </div>
+                <span class="badge" style="margin-bottom: 0.8rem; display: inline-block;">Class of 2020</span>
+                <h3 class="story-title">Global Impact Award</h3>
+                <p class="story-excerpt"
+                    style="font-style: italic; border-left: 3px solid #6c5ce7; padding-left: 1rem;">"Sustainable
+                    engineering can change the world. The mentorship program here gave me the confidence to pursue it."
+                </p>
+                <a href="#" class="story-link">Read Full Story →</a>
+            </div>
+        </div>
+        <div class="story-card">
+            <div class="story-image">
+                <img src="{% static 'images/profiles/emily.jpg' %}" alt="Emily Rodriguez"
+                    style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+            <div class="story-content">
+                <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem;">
+                    <div
+                        style="width: 48px; height: 48px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid #00b894;">
+                        <img src="{% static 'images/profiles/emily.jpg' %}" alt="Emily Rodriguez"
+                            style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div>
+                        <h3 class="story-title" style="margin: 0; font-size: 1.15rem;">Emily Rodriguez</h3>
+                        <span style="font-size: 0.8rem; color: #999;">Research Lead, BioMedics Institute</span>
+                    </div>
+                </div>
+                <span class="badge" style="margin-bottom: 0.8rem; display: inline-block;">Class of 2019</span>
+                <h3 class="story-title">Research Breakthrough</h3>
+                <p class="story-excerpt"
+                    style="font-style: italic; border-left: 3px solid #00b894; padding-left: 1rem;">"The alumni
+                    mentorship network shaped my path from a curious student to leading cancer research at a top
+                    institute."</p>
+                <a href="#" class="story-link">Read Full Story →</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+<!-- Experience & Innovations -->
+<section class="innovations-section">
+    <div class="container">
+        <h2 class="section-title">Experience & Innovations</h2>
+        <p class="section-subtitle">Discover the unique features that make our alumni portal stand out.</p>
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">🚀</div>
+                <h3>Innovation Hub</h3>
+                <p>Collaborate on cutting-edge projects with fellow alumni and students. Turn ideas into reality
+                    together.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🏆</div>
+                <h3>Achievement Awards</h3>
+                <p>Recognizing outstanding contributions to the industry and society. Celebrate excellence from our
+                    community.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🤝</div>
+                <h3>Mentorship Reviews</h3>
+                <p>Top-rated mentors helping shape the next generation of leaders. Get guidance from industry experts.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta-section">
+    <h2>Ready to Start Your Journey?</h2>
+    <p>Join thousands of alumni and students building the future together.</p>
+    <a href="{% url 'register' %}" class="cta-btn">Get Started Today</a>
+</section>
+
+{% endblock %}

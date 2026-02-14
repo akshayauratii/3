@@ -1,0 +1,66 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.home, name='home'),
+    path('register/', views.register_view, name='register'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('about/', views.about, name='about'),
+    path('contact/', views.contact, name='contact'),
+    path('impact_stories/', views.impact_stories, name='impact_stories'),
+    path('knowledge_vault/', views.knowledge_vault, name='knowledge_vault'),
+    path('knowledge_vault/resource/<str:slug>/', views.resource_detail, name='resource_detail'),
+    path('job_collections/', views.job_collections, name='job_collections'),
+    path('job_collections/view/<int:job_id>/', views.job_detail, name='job_detail'),
+    path('ecosystem/', views.ecosystem, name='ecosystem'),
+    path('ecosystem/jobs/', views.jobs_home, name='jobs_home'),
+    path('ecosystem/internships/', views.internships_home, name='internships_home'),
+    path('ecosystem/jobs/<str:category>/', views.job_list, name='job_list'),
+    path('ecosystem/internships/<str:stipend_type>/', views.internship_list, name='internship_list'),
+    path('internship/payment/<int:job_id>/', views.internship_payment, name='internship_payment'),
+    path('opportunity/apply/<int:job_id>/', views.apply_for_opportunity, name='apply_for_opportunity'),
+    
+    # Mentoring System
+    path('mentoring/', views.mentoring_brochure, name='mentoring_brochure'),
+    path('mentoring/request/<int:mentor_id>/', views.request_mentor, name='request_mentor'),
+    path('mentoring/manage/', views.manage_mentorship_requests, name='manage_mentorship_requests'),
+    path('mentoring/chat/<int:req_id>/', views.mentor_chat, name='mentor_chat'),
+    
+    path('open_source/', views.open_source, name='open_source'),
+    path('open_source/collaboration/<str:slug>/', views.open_source_detail, name='open_source_detail'),
+    path('quiz/', views.quiz, name='quiz'),
+    path('feedback/', views.feedback, name='feedback'),
+    path('social_feed/', views.social_feed, name='social_feed'),
+    path('notifications/', views.notifications_view, name='notifications'),
+    path('connections/', views.connections_view, name='connections'),
+    path('skills/', views.skills_view, name='skills'),
+    path('applied_jobs/', views.applied_jobs_view, name='applied_jobs'),
+    path('upcoming_events/', views.upcoming_events_view, name='upcoming_events'),
+    path('tea_time/', views.tea_time, name='tea_time'),
+    path('tea_time/create/', views.create_tea_session, name='create_tea_session'),
+    path('tea_time/join/<int:session_id>/', views.join_meeting, name='join_meeting'),
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
+    path('profile/<str:username>/', views.view_profile, name='view_profile'),
+    path('profile/<str:username>/connect/', views.connect_user, name='connect_user'),
+    path('community/', views.community_hub, name='community_hub'),
+    path('community/like/<int:post_id>/', views.like_post, name='like_post'),
+    path('opportunity/create/', views.create_opportunity, name='create_opportunity'),
+
+    # Admin Portal
+    path('admin-portal/', views.admin_dashboard, name='admin_dashboard'),
+    path('admin-portal/users/', views.admin_user_management, name='admin_user_management'),
+    path('admin-portal/mentor-requests/', views.admin_mentor_requests, name='admin_mentor_requests'),
+    path('admin-portal/quiz/', views.admin_quiz_participation, name='admin_quiz_participation'),
+    path('admin-portal/logs/', views.admin_audit_logs, name='admin_audit_logs'),
+    path('admin-portal/reports/', views.admin_reports, name='admin_reports'),
+    path('admin-portal/settings/', views.admin_settings, name='admin_settings'),
+    
+    # Admin Detailed Pages
+    path('admin-portal/students/', views.admin_students_list, name='admin_students_list'),
+    path('admin-portal/alumni/', views.admin_alumni_list, name='admin_alumni_list'),
+    path('admin-portal/mentors/', views.admin_mentors_list, name='admin_mentors_list'),
+    path('admin-portal/active-users/', views.admin_active_users_list, name='admin_active_users_list'),
+    path('admin-portal/quiz-stats/', views.admin_quiz_stats, name='admin_quiz_stats'),
+]

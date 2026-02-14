@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .jobs-header {
+        background: url('https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 6rem 2rem;
+        text-align: center;
+        position: relative;
+    }
+
+    .jobs-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .sector-section {
+        margin-bottom: 4rem;
+    }
+
+    .sector-title {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .job-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .job-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        border-left: 5px solid var(--secondary-color);
+        transition: transform 0.2s;
+    }
+
+    .job-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .job-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .job-company {
+        color: #666;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .job-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.9rem;
+        color: #888;
+        margin-bottom: 1rem;
+    }
+
+    .apply-btn {
+        display: inline-block;
+        background: var(--secondary-color);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+</style>
+
+<div class="jobs-header">
+    <div class="header-content">
+        <h1 style="font-size: 3.5rem; margin-bottom: 1rem;">Job Collections</h1>
+        <p style="font-size: 1.25rem; opacity: 0.9;">Curated Opportunities Across Top Sectors</p>
+    </div>
+</div>
+
+<div class="container"
+    style="margin-top: -3rem; position: relative; z-index: 2; background: var(--bg-color); border-radius: 20px 20px 0 0; padding-top: 3rem;">
+
+    <!-- Tech Sector -->
+    <section class="sector-section">
+        <h2 class="sector-title">💻 Technology & Engineering</h2>
+        <div class="job-grid">
+            {% for job in tech_jobs %}
+            <div class="job-card">
+                <div class="job-title">{{ job.title }}</div>
+                <div class="job-company">{{ job.company }}</div>
+                <div class="job-meta">
+                    <span>📍 {{ job.location }}</span>
+                    <span>⏱️ {{ job.type|title }}</span>
+                </div>
+                <a href="{% url 'job_detail' job.id %}" class="apply-btn">View Details</a>
+            </div>
+            {% empty %}
+            <p>No open positions in this sector currently.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Government Sector -->
+    <section class="sector-section">
+        <h2 class="sector-title">🏛️ Government & Public Service</h2>
+        <div class="job-grid">
+            {% for job in govt_jobs %}
+            <div class="job-card" style="border-left-color: #d32f2f;">
+                <div class="job-title">{{ job.title }}</div>
+                <div class="job-company">{{ job.company }}</div>
+                <div class="job-meta">
+                    <span>📍 {{ job.location }}</span>
+                    <span>⏱️ {{ job.type|title }}</span>
+                </div>
+                <a href="{% url 'job_detail' job.id %}" class="apply-btn" style="background: #d32f2f;">View Details</a>
+            </div>
+            {% empty %}
+            <p>No open positions in this sector currently.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Marketing Sector -->
+    <section class="sector-section">
+        <h2 class="sector-title">📢 Marketing & Creative</h2>
+        <div class="job-grid">
+            {% for job in marketing_jobs %}
+            <div class="job-card" style="border-left-color: #fbc02d;">
+                <div class="job-title">{{ job.title }}</div>
+                <div class="job-company">{{ job.company }}</div>
+                <div class="job-meta">
+                    <span>📍 {{ job.location }}</span>
+                    <span>⏱️ {{ job.type|title }}</span>
+                </div>
+                <a href="{% url 'job_detail' job.id %}" class="apply-btn" style="background: #f9a825;">View Details</a>
+            </div>
+            {% empty %}
+            <p>No open positions in this sector currently.</p>
+            {% endfor %}
+        </div>
+</div>
+</section>
+
+<!-- Back to Dashboard Button -->
+<div style="text-align: center; margin-top: 4rem; padding-bottom: 2rem;">
+    <a href="{% url 'dashboard' %}" style="
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #444;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        " onmouseover="this.style.background='#222'" onmouseout="this.style.background='#444'">
+        &larr; Back to Dashboard
+    </a>
+</div>
+
+</div>
+{% endblock %}

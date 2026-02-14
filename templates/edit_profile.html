@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 2rem auto; padding: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 style="color: var(--primary-color); margin: 0;">✏️ Edit Profile</h2>
+        <a href="{% url 'dashboard' %}" class="btn" style="background: #f0f2f5; color: #333;">Back to Dashboard</a>
+    </div>
+
+    <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if p_form.errors %}
+            <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                {{ p_form.errors }}
+            </div>
+            {% endif %}
+
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <label style="cursor: pointer; display: inline-block; position: relative;">
+                    <div
+                        style="width: 100px; height: 100px; background: #e0e0e0; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                        {% if user.profile.profile_picture %}
+                        <img src="{{ user.profile.profile_picture.url }}" alt="Profile"
+                            style="width: 100%; height: 100%; object-fit: cover;">
+                        {% else %}
+                        <span style="font-size: 3rem;">👤</span>
+                        {% endif %}
+                    </div>
+                    <div style="margin-top: 0.5rem; color: var(--primary-color); font-size: 0.9rem;">Change Photo</div>
+                    {{ p_form.profile_picture }}
+                </label>
+                <!-- Hide default file input if possible, or just style it simply -->
+                <style>
+                    input[type="file"] {
+                        display: block;
+                        margin: 0.5rem auto;
+                    }
+                </style>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Bio</label>
+                {{ p_form.bio }}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Skills</label>
+                {{ p_form.skills }}
+                <p style="font-size: 0.8rem; color: #777; margin-top: 0.2rem;">Separate skills with commas.</p>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Government Internships</label>
+                {{ p_form.government_internships }}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Private Internships &
+                    Jobs</label>
+                {{ p_form.private_internships_jobs }}
+            </div>
+
+            <button type="submit" class="btn" style="width: 100%; padding: 12px; font-size: 1.1rem;">Save
+                Changes</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 1rem;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+    }
+</style>
+{% endblock %}

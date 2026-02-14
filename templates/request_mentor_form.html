@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container"
+    style="max-width: 600px; margin: 4rem auto; padding: 2rem; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+    <h2 style="text-align: center; margin-bottom: 1.5rem;">Request Mentorship 🤝</h2>
+    <p style="text-align: center; color: #666; margin-bottom: 2rem;">Connecting with <strong>{{ mentor.username
+            }}</strong></p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">How can this mentor help
+                you?</label>
+            <textarea name="message" rows="5" placeholder="Include your specific doubts or career goals..."
+                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;"></textarea>
+            <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">This message will be shared with the Mentor and
+                the Admin.</p>
+        </div>
+
+        <button type="submit" class="btn"
+            style="width: 100%; padding: 12px; font-size: 1.1rem; background: #a18cd1;">Send Request</button>
+        <a href="{% url 'mentoring_brochure' %}"
+            style="display: block; text-align: center; margin-top: 1rem; color: #777; text-decoration: none;">Cancel</a>
+    </form>
+</div>
+{% endblock %}

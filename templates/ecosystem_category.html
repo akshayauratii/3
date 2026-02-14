@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .category-header {
+        background: #f5f5f5;
+        padding: 3rem 2rem;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .job-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .job-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        border-left: 5px solid var(--secondary-color);
+        transition: transform 0.2s;
+    }
+
+    .job-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .job-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .job-company {
+        color: #666;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .job-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.9rem;
+        color: #888;
+        margin-bottom: 1rem;
+    }
+
+    .apply-btn {
+        display: inline-block;
+        background: var(--secondary-color);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+</style>
+
+<div class="category-header">
+    <h1 style="font-size: 2.5rem; text-transform: capitalize;">{{ title }}</h1>
+    <p>Curated opportunities just for you.</p>
+    <a href="{% url 'sector_selection' type %}"
+        style="margin-top: 1rem; display: inline-block; color: #666; text-decoration: none;">&larr; Back to Sectors</a>
+</div>
+
+<div class="container" style="padding-bottom: 4rem; margin-top: 2rem;">
+
+    <div class="job-grid">
+        {% for job in opportunities %}
+        <div class="job-card"
+            style="border-left-color: {% if job.category == 'govt' %}#d32f2f{% else %}var(--secondary-color){% endif %};">
+            <div class="job-title">{{ job.title }}</div>
+            <div class="job-company">{{ job.company }}</div>
+            <div class="job-meta">
+                <span>📍 {{ job.location }}</span>
+                <span>⏱️ {{ job.type|title }}</span>
+            </div>
+            <a href="{% url 'job_detail' job.id %}" class="apply-btn"
+                style="background: {% if job.category == 'govt' %}#d32f2f{% else %}var(--secondary-color){% endif %};">View
+                Details</a>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #666;">
+            <h3>No opportunities found in this category yet.</h3>
+            <p>Check back later or explore other sectors!</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
