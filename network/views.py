@@ -481,8 +481,28 @@ QUIZ_QUESTIONS = [
 
 @login_required
 def quiz(request):
-    # Use first 30 questions in fixed order as per most recent request
-    current_questions = QUIZ_QUESTIONS[:30]
+    # Check if questions are already in session for this attempt
+    # We store question IDs in the session to persist across reloads but randomize per new attempt
+    question_ids = request.session.get('quiz_question_ids')
+    
+    if not question_ids:
+        # Select 30 random questions
+        # Ensure we don't crash if fewer than 30 exist
+        num_questions = min(len(QUIZ_QUESTIONS), 30)
+        selected_questions = random.sample(QUIZ_QUESTIONS, num_questions)
+        question_ids = [q['id'] for q in selected_questions]
+        request.session['quiz_question_ids'] = question_ids
+    
+    # Retrieve question objects based on IDs
+    current_questions = [q for q in QUIZ_QUESTIONS if q['id'] in question_ids]
+    
+    # If for some reason the questions changed in code and IDs don't match, fallback
+    if len(current_questions) != len(question_ids):
+        num_questions = min(len(QUIZ_QUESTIONS), 30)
+        selected_questions = random.sample(QUIZ_QUESTIONS, num_questions)
+        question_ids = [q['id'] for q in selected_questions]
+        current_questions = selected_questions
+        request.session['quiz_question_ids'] = question_ids
     
     if request.method == 'POST':
         score = 0
@@ -501,6 +521,10 @@ def quiz(request):
             
         profile.assessment_marks = score
         profile.save()
+        
+        # Clear session so next time they get new questions
+        if 'quiz_question_ids' in request.session:
+            del request.session['quiz_question_ids']
         
         if score >= 25:
             messages.success(request, f'Congratulations! You passed with a score of {score}/30. New opportunities unlocked!')
@@ -626,9 +650,23 @@ def create_chai_time_session(request):
 # Alias for urls.py compatibility
 create_tea_session = create_chai_time_session
 
+from django.utils import timezone
+
 @login_required
 def join_meeting(request, session_id):
     session = get_object_or_404(TeaTimeSession, id=session_id)
+    
+    # Check if session is completed
+    if session.status == 'completed':
+        messages.error(request, "This session has already ended.")
+        return redirect('tea_time')
+        
+    # Check if it's too early to join (allow 5 mins before)
+    # Also allow if status is explicitly set to 'live'
+    if session.status != 'live' and timezone.now() < session.date_time:
+         messages.error(request, f"This session hasn't started yet. Please join at {session.date_time.strftime('%H:%M')}.")
+         return redirect('tea_time')
+
     # Add user to participants if not already
     if request.user not in session.participants.all():
         session.participants.add(request.user)
@@ -1090,20 +1128,35 @@ def mentor_chat(request, req_id):
                 context_responses = {
                     'python': [
                         "Python is excellent for readability. Are you working on its application in Data Science or Web Development (Django/Flask)?",
-                        "Make sure to understand list comprehensions and decorators!"
+                        "Make sure to understand list comprehensions and decorators! They are key to writing pythonic code."
                     ],
                     'javascript': [
                         "JavaScript is the language of the web. Have you tried ES6+ features like arrow functions and destructuring?",
-                        "Check out MDN docs for deep dives into JS concepts."
+                        "Check out MDN docs for deep dives into JS concepts. It's the best resource out there."
                     ],
                     'django': [
                         "Django's MVT architecture is powerful. Are you using Class Based Views or Function Based Views?",
-                        "Don't forget to run migrations after changing models!"
+                        "Don't forget to run migrations after changing models! It's a common mistake."
                     ],
-                    'java': [
-                        "Java is great for enterprise apps. Make sure you understand the 'Object Oriented' principles thoroughly.",
-                        "Are you using Spring Boot for your Java project? It's highly demanded in the current market.",
-                        "For Java performance, focus on Garbage Collection and Memory Management concepts."
+                    'html': [
+                        "HTML provides the structure. Make sure you use semantic tags like <header>, <nav>, and <main> for better accessibility.",
+                        "Are you learning HTML5? It introduced great features like local storage and audio/video tags."
+                    ],
+                    'css': [
+                        "CSS brings life to the web. Have you tried Flexbox or Grid layout? They make checking responsiveness much easier.",
+                        "Consistency is key in design. Try using CSS variables for your colors and fonts."
+                    ],
+                    'sql': [
+                        "SQL is essential for backend development. Practice writing JOINs and subqueries; they are often asked in interviews.",
+                        "Understanding normalization (1NF, 2NF, 3NF) will help you design better databases."
+                    ],
+                    'git': [
+                        "Git is crucial for collaboration. Remember to commit often and write meaningful commit messages.",
+                        "Have you tried branching? It's the best way to work on new features without breaking the main code."
+                    ],
+                    'api': [
+                        "APIs connect different software systems. REST and GraphQL are the two most popular architectural styles.",
+                        "When testing APIs, tools like Postman or Insomnia are very helpful."
                     ],
                     'resume': [
                         "Your resume should be ATS-friendly. Use a clean single-column layout and include quantifiable results.",
@@ -1112,41 +1165,52 @@ def mentor_chat(request, req_id):
                     ],
                     'interview': [
                         "For technical interviews, practice LeetCode and understand Big O notation. It's almost always asked.",
-                        "Behavioral questions are as important as technical ones. Use the START method to answer them.",
+                        "Behavioral questions are as important as technical ones. Use the START method (Situation, Task, Action, Result) to answer them.",
                         "Don't forget to research the company's culture before the interview. It shows genuine interest."
                     ],
                     'project': [
-                        "Projects are the best way to learn. Try building a CRUD app first, then scale it with real-time features.",
+                        "Projects are the best way to learn. Try building a CRUD app first, then scale it with real-time features using WebSockets.",
                         "For your project portfolio, focus on solving a real-world problem rather than just following tutorials.",
                         "Make sure your projects are well-documented on GitHub. A good README is a developer's best friend."
+                    ],
+                    'internship': [
+                        "To land an internship, focus on building a strong portfolio and networking. Have you reached out to alumni?",
+                        "Tailor your application to each company. Generic cover letters rarely work.",
+                        "Don't be afraid to apply even if you don't meet 100% of the requirements. Passion counts!"
+                    ],
+                    'job': [
+                        "Job hunting can be tough, but persistence pays off. Network on LinkedIn and attend industry meetups.",
+                        "Consider contributing to open source. It's a great way to get noticed by potential employers."
+                    ],
+                    'open source': [
+                        "Open source is a great way to learn. Start with 'good first issue' labels on GitHub repositories.",
+                        "Read the contribution guidelines carefully before submitting a Pull Request."
+                    ],
+                    'roadmap': [
+                        "Check out roadmap.sh for detailed developer roadmaps. It covers everything from Frontend to DevOps.",
+                        "Don't try to learn everything at once. Focus on one path (e.g., Frontend or Backend) and master the basics first."
                     ]
                 }
                 
-                # Find exact match or falls back to general
+                # Check for triggering keywords and select a response
                 response_text = ""
                 for keyword, responses in context_responses.items():
                     if keyword in lower_content:
                         response_text = random.choice(responses)
                         break
                 
+                # Fallback responses if no keyword matches
                 if not response_text:
-                    if 'internship' in lower_content or 'job' in lower_content:
-                        response_text = "Regarding career opportunities, I recommend keeping your Git repo active. Recruiters love seeing consistent contributions!"
-                    elif 'error' in lower_content or 'bug' in lower_content or 'help' in lower_content:
+                    if 'error' in lower_content or 'bug' in lower_content or 'help' in lower_content:
                         response_text = "Debugging is a core skill. Try to reproduce the error in an isolated environment first. What does the console log say?"
+                    elif 'thank' in lower_content:
+                        response_text = "You're welcome! Let me know if you have any other questions."
                     elif 'hi' in lower_content or 'hello' in lower_content:
-                        response_text = f"Hello {request.user.username}! I am happy to guide you. How can I assist with your doubts today?"
+                        response_text = "Hello! How can I help you with your tech journey today?"
                     else:
-                        ai_responses = [
-                            "That's a great question! I suggest focusing on the fundamentals before diving into complex layers.",
-                            "I understand your doubt. Most students find this tricky at first. Have you tried a hands-on approach?",
-                            "Interesting point! Many industry experts still debate this topic. Always keep the user experience in mind.",
-                            "Glad to see your proactive approach! Keep exploring these concepts, they are highly valuable.",
-                            "Hello! I am here to help. Could you clarify which part of the implementation you're finding difficult?",
-                            "That sounds like a robust strategy for your career. Don't forget to network with other alumni too!"
-                        ]
-                        response_text = random.choice(ai_responses)
+                        response_text = "That's an interesting topic! Could you elaborate a bit more so I can give you a better answer?"
 
+                # Create the Mentor's (AI) response
                 mentor_name = ment_req.mentor.first_name if ment_req.mentor.first_name else ment_req.mentor.username
                 ChatMessage.objects.create(
                     request=ment_req,

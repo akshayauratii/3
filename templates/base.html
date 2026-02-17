@@ -205,7 +205,11 @@
 <body>
 
     <nav>
-        <div class="nav-brand">Alumni Networking Portal</div>
+        <a href="{% url 'home' %}" class="nav-brand">🎓 Alumni Networking Portal</a>
+        <div class="nav-mission-text">
+            Connecting Past, Present, and Future<br>
+            <i>Building Bridges for Success</i>
+        </div>
         <div class="nav-links">
             <a href="{% url 'home' %}"
                 class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
